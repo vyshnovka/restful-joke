@@ -1,9 +1,6 @@
-# Unnamed Yet Platformer
+# Life Is A Joke
 
-This is a platformer.    
-For now, that's all.
-
-I have grand plans and high hopes, so just wait for something disruptive.
+No description yet...
 
 ## Tools
 
@@ -12,6 +9,10 @@ I have grand plans and high hopes, so just wait for something disruptive.
 
 ## Setup
 
-1. Install Unity 2020.3.30 from [archive](https://unity3d.com/get-unity/download/archive).    
-2. Clone this repository using `git clone https://github.com/vyshnovka/unnamed-platformer.git` in Git Bash.    
+1. Install Unity 2021.3.5 from [archive](https://unity3d.com/get-unity/download/archive).    
+2. Clone this repository using `git clone https://github.com/vyshnovka/restful-joke.git` in Git Bash.    
 4. Open created folder as a project in Unity Hub.    
+
+## Credits
+
+[Jokes API](https://v2.jokeapi.dev/) joke generator made by **Sv443**.    
