@@ -24,11 +24,49 @@ public class Joke
     public string lang;
 }
 
+public enum Category
+{
+    Any,
+    Programming,
+    Misc,
+    Dark,
+    Pun,
+    Spooky
+}
+
+public enum Blacklist
+{
+    Nsfw,
+    Religious,
+    Politician,
+    Racist,
+    Sexist,
+    Explicit
+}
+
 public static class JokeAPI
 {
+    public static string category;
+    public static string blacklist;
+
+    public static void SetCategory()
+    {
+        category = Category.Any.ToString();
+    }
+
+    public static void SetBlacklist()
+    {
+        blacklist = "";
+    }
+
     public static Joke GenerateJoke()
     {
-        HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://v2.jokeapi.dev/joke/Miscellaneous,Dark,Pun,Spooky?type=single");
+        SetCategory();
+        SetBlacklist();
+
+        HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://v2.jokeapi.dev/joke/" + category + "?" + blacklist + "type=single");
+
+        Debug.Log(category + " " + blacklist);
         HttpWebResponse response = (HttpWebResponse)request.GetResponse();
 
         StreamReader reader = new StreamReader(response.GetResponseStream());
