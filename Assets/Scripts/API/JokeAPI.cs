@@ -26,7 +26,6 @@ public class Joke
 
 public enum Category
 {
-    Any,
     Programming,
     Misc,
     Dark,
@@ -51,7 +50,8 @@ public static class JokeAPI
 
     public static void SetCategory()
     {
-        category = Category.Any.ToString();
+        //category = Category.Any.ToString();
+        category = "Programming,Miscellaneous,Dark,Pun,Spooky";
     }
 
     public static void SetBlacklist()
