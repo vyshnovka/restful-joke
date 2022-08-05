@@ -27,7 +27,7 @@ public class Joke
 public enum Category
 {
     Programming,
-    Misc,
+    Miscellaneous,
     Dark,
     Pun,
     Spooky
@@ -45,12 +45,11 @@ public enum Blacklist
 
 public static class JokeAPI
 {
-    public static string category;
-    public static string blacklist;
+    public static string category = "Programming,Miscellaneous,Dark,Pun,Spooky";
+    public static string blacklist = "";
 
     public static void SetCategory()
     {
-        //category = Category.Any.ToString();
         category = "Programming,Miscellaneous,Dark,Pun,Spooky";
     }
 
@@ -61,8 +60,8 @@ public static class JokeAPI
 
     public static Joke GenerateJoke()
     {
-        SetCategory();
-        SetBlacklist();
+        //SetCategory();
+        //SetBlacklist();
 
         HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://v2.jokeapi.dev/joke/" + category + "?" + blacklist + "type=single");
 
