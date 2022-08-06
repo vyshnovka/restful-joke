@@ -45,27 +45,20 @@ public enum Blacklist
 
 public static class JokeAPI
 {
-    public static string category = "Programming,Miscellaneous,Dark,Pun,Spooky";
-    public static string blacklist = "";
-
-    public static void SetCategory()
+    private static string SetCategory()
     {
-        category = "Programming,Miscellaneous,Dark,Pun,Spooky";
+        return "Programming,Miscellaneous,Dark,Pun,Spooky";
     }
 
-    public static void SetBlacklist()
+    private static string SetBlacklist()
     {
-        blacklist = "";
+        return "";
     }
 
     public static Joke GenerateJoke()
     {
-        //SetCategory();
-        //SetBlacklist();
+        HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://v2.jokeapi.dev/joke/" + SetCategory() + "?" + SetBlacklist() + "type=single");
 
-        HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://v2.jokeapi.dev/joke/" + category + "?" + blacklist + "type=single");
-
-        Debug.Log(category + " " + blacklist);
         HttpWebResponse response = (HttpWebResponse)request.GetResponse();
 
         StreamReader reader = new StreamReader(response.GetResponseStream());
