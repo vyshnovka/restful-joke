@@ -1,18 +1,24 @@
-using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-public abstract class Checkbox : MonoBehaviour
+public class Checkbox<T> : MonoBehaviour
 {
-    [NonSerialized]
-    public Toggle toggle;
+    private Toggle toggle;
+
+    [SerializeField]
+    private T toggleValue;
 
     void Start()
     {
         toggle = GetComponent<Toggle>();
 
         toggle.onValueChanged.AddListener(OnToggle);
+
+        toggle.isOn = PlayerPrefs.GetInt(toggleValue.ToString(), 1) == 1 ? true : false;
     }
 
-    public abstract void OnToggle(bool value);
+    public void OnToggle(bool value)
+    {
+        PlayerPrefs.SetInt(toggleValue.ToString(), toggle.isOn == true ? 1 : 0);
+    }
 }
