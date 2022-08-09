@@ -9,7 +9,7 @@ public class Joke
     public bool error;
     public string category;
     public string type;
-    public string joke;
+    public string joke = "There are no jokes for you today. But hasn't your life laughed at you yet?";
     public struct flags
     {
         public bool nsfw;
@@ -77,17 +77,21 @@ public static class JokeAPI
 
     public static Joke GenerateJoke()
     {
-        Debug.Log(SetBlacklist());
-        HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://v2.jokeapi.dev/joke/" + SetCategory() + "?" + SetBlacklist() + "type=single");
+        try
+        {
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://v2.jokeapi.dev/joke/" + SetCategory() + "?" + SetBlacklist() + "type=single");
 
-        HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
 
-        StreamReader reader = new StreamReader(response.GetResponseStream());
+            StreamReader reader = new StreamReader(response.GetResponseStream());
 
-        string json = reader.ReadToEnd();
+            string json = reader.ReadToEnd();
 
-        Debug.Log(json);
-
-        return JsonUtility.FromJson<Joke>(json);
+            return JsonUtility.FromJson<Joke>(json);
+        }
+        catch (WebException)
+        {
+            return new Joke();
+        }
     }
 }
