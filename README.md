@@ -1,6 +1,7 @@
 # Life Is A Joke
 
-No description yet... But it is RESTful.
+No description yet... But it is RESTful.    
+And it will be a bomb.
 
 ## Tools
 
