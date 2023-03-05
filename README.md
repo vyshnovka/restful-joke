@@ -10,7 +10,7 @@ And it will be a bomb.
 
 ## Setup
 
-1. Install Unity 2021.3.5 from [archive](https://unity3d.com/get-unity/download/archive).    
+1. Install Unity 2021.3.17 from [archive](https://unity3d.com/get-unity/download/archive).    
 2. Clone this repository using `git clone https://github.com/vyshnovka/restful-joke.git` in Git Bash.    
 4. Open created folder as a project in Unity Hub.    
 
