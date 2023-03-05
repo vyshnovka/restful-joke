@@ -16,12 +16,9 @@ public class Checkbox<T> : MonoBehaviour
 
         toggle.isOn = PlayerPrefs.GetInt(toggleValue.ToString(), 1) == 1;
     }
+    void OnDisable() => toggle.onValueChanged.RemoveAllListeners();
 
     /// <summary>Saves toggle value to <see cref="PlayerPrefs"/>.</summary>
     private void OnToggle(bool value) => PlayerPrefs.SetInt(toggleValue.ToString(), toggle.isOn ? 1 : 0);
 
-    void OnDisable()
-    {
-        toggle.onValueChanged.RemoveAllListeners();
-    }
 }
