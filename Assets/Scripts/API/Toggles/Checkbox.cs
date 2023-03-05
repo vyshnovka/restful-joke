@@ -18,7 +18,7 @@ public class Checkbox<T> : MonoBehaviour
     }
 
     /// <summary>Saves toggle value to <see cref="PlayerPrefs"/>.</summary>
-    private void OnToggle(bool value) => PlayerPrefs.SetInt(toggleValue.ToString(), toggle.isOn == true ? 1 : 0);
+    private void OnToggle(bool value) => PlayerPrefs.SetInt(toggleValue.ToString(), toggle.isOn ? 1 : 0);
 
     void OnDisable()
     {
