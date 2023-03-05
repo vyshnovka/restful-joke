@@ -9,7 +9,7 @@ public class Joke
     public bool error;
     public string category;
     public string type;
-    public string joke = "There are no jokes for you today. But hasn't your life laughed at you yet?";
+    public string joke = "There are no jokes for you today. But hasn't your life laughed at you yet?"; // Default value in case of missing joke (e.g. an error in web response might lead to this field being empty).
     public struct flags
     {
         public bool nsfw;
@@ -52,12 +52,10 @@ public static class JokeAPI
         foreach (Category item in Enum.GetValues(typeof(Category)))
         {
             if (PlayerPrefs.GetInt(item.ToString(), 1) == 1)
-            {
                 request += item.ToString() + ",";
-            }
         }
 
-        return request.Length > 1 ? request.Remove(request.Length - 1) : "Programming,Miscellaneous,Dark,Pun,Spooky";
+        return string.IsNullOrEmpty(request) ? "Programming,Miscellaneous,Dark,Pun,Spooky" : request.Remove(request.Length - 1);
     }
 
     private static string SetBlacklist()
@@ -67,27 +65,26 @@ public static class JokeAPI
         foreach (Blacklist item in Enum.GetValues(typeof(Blacklist)))
         {
             if (PlayerPrefs.GetInt(item.ToString(), 1) == 1)
-            {
                 request += item.ToString() + ",";
-            }
         }
 
-        return request.Length > 1 ? "blacklistFlags=" + request.ToLower().Remove(request.Length - 1) + "&" : request;
+        return string.IsNullOrEmpty(request) ? request : "blacklistFlags=" + request.ToLower().Remove(request.Length - 1) + "&";
     }
 
+    /// <summary>Sends web request to <see href="https://sv443.net/jokeapi/v2/">JokeAPI</see> and generates response in form of a <see cref="Joke"/>.</summary>
     public static Joke GenerateJoke()
     {
         try
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://v2.jokeapi.dev/joke/" + SetCategory() + "?" + SetBlacklist() + "type=single");
+            // Handling response disposal via 'using' block.
+            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+            {
+                StreamReader reader = new StreamReader(response.GetResponseStream());
+                string json = reader.ReadToEnd();
 
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-
-            StreamReader reader = new StreamReader(response.GetResponseStream());
-
-            string json = reader.ReadToEnd();
-
-            return JsonUtility.FromJson<Joke>(json);
+                return JsonUtility.FromJson<Joke>(json);
+            }
         }
         catch (WebException)
         {

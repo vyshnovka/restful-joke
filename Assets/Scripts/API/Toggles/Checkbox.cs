@@ -14,11 +14,14 @@ public class Checkbox<T> : MonoBehaviour
 
         toggle.onValueChanged.AddListener(OnToggle);
 
-        toggle.isOn = PlayerPrefs.GetInt(toggleValue.ToString(), 1) == 1 ? true : false;
+        toggle.isOn = PlayerPrefs.GetInt(toggleValue.ToString(), 1) == 1;
     }
 
-    public void OnToggle(bool value)
+    /// <summary>Saves toggle value to <see cref="PlayerPrefs"/>.</summary>
+    private void OnToggle(bool value) => PlayerPrefs.SetInt(toggleValue.ToString(), toggle.isOn == true ? 1 : 0);
+
+    void OnDisable()
     {
-        PlayerPrefs.SetInt(toggleValue.ToString(), toggle.isOn == true ? 1 : 0);
+        toggle.onValueChanged.RemoveAllListeners();
     }
 }
