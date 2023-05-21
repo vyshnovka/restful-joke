@@ -9,9 +9,13 @@ public class TimeManager : MonoBehaviour
     private RawImage viewImage;
 
     [SerializeField]
-    private int minBrightness;
+    private Gradient timeOfDay;
+
+#if (UNITY_EDITOR)
     [SerializeField]
-    private int maxBrightness;
+    [Range(0f, 1f), Tooltip("Value used for debugging only.")]
+    private float timePassed;
+#endif
 
     void Start() => StartCoroutine(UpdateTime());
 
@@ -21,10 +25,13 @@ public class TimeManager : MonoBehaviour
     {
         while (true)
         {
-            viewImage.color = Color.HSVToRGB(0, 0, TimePassed() * 100);
-
-            //yield return new WaitForSecondsRealtime(300);
+#if (UNITY_EDITOR)
+            viewImage.color = timeOfDay.Evaluate(timePassed);
             yield return new WaitForEndOfFrame();
+#else
+            viewImage.color = timeOfDay.Evaluate(TimePassed());
+            yield return new WaitForSecondsRealtime(300);
+#endif
         }
     }
 
@@ -39,7 +46,6 @@ public class TimeManager : MonoBehaviour
 
         float timeRatio = secondsPassed / secondsFull;
 
-        //TODO: Should return ratio as for timelapse. Currently logic is broken.
-        return timeRatio < 0.5 ? timeRatio : 1 - timeRatio;
+        return timeRatio;
     }
 }
