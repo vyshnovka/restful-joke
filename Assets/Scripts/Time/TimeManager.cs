@@ -15,6 +15,9 @@ public class TimeManager : MonoBehaviour
     [SerializeField]
     [Range(0f, 1f), Tooltip("Value used for debugging only.")]
     private float timePassed;
+
+    [SerializeField]
+    private bool testInEditor = false;
 #endif
 
     void Start() => StartCoroutine(UpdateTime());
@@ -26,7 +29,11 @@ public class TimeManager : MonoBehaviour
         while (true)
         {
 #if (UNITY_EDITOR)
-            viewImage.color = timeOfDay.Evaluate(timePassed);
+            if (testInEditor)
+                viewImage.color = timeOfDay.Evaluate(timePassed);
+            else
+                viewImage.color = timeOfDay.Evaluate(TimePassed());
+
             yield return new WaitForEndOfFrame();
 #else
             viewImage.color = timeOfDay.Evaluate(TimePassed());
