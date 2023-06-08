@@ -2,10 +2,10 @@ using System.Text;
 
 public static class StringExtensions
 {
-    /// <summary>Wraps string <paramref name="str"/> with <paramref name="prefix"/> and <paramref name="postfix"/>.</summary>
+    /// <summary>Wrap string <paramref name="str"/> with <paramref name="prefix"/> and <paramref name="postfix"/>.</summary>
     public static string Wrap(this string str, string prefix = "", string postfix = "") => $"{prefix}{str}{postfix}";
 
-    /// <summary>Strips character <paramref name="ch"/> from string <paramref name="str"/>.</summary>
+    /// <summary>Strip character <paramref name="ch"/> from string <paramref name="str"/>.</summary>
     public static string Strip(this string str, char ch)
     {
         if (string.IsNullOrEmpty(str)) return str;
