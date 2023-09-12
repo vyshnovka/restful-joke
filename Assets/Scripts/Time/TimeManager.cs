@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -20,11 +21,18 @@ public class TimeManager : MonoBehaviour
     private bool testInEditor = false;
 #endif
 
-    void Start() => StartCoroutine(UpdateTime());
+    [SerializeField]
+    private TextMeshProUGUI timeToDisplay;
+
+    void Start()
+    {
+        StartCoroutine(UpdateTimeVisual());
+        StartCoroutine(UpdateTimeText());
+    }
 
     void OnDestroy() => StopAllCoroutines();
 
-    private IEnumerator UpdateTime()
+    private IEnumerator UpdateTimeVisual()
     {
         while (true)
         {
@@ -54,5 +62,11 @@ public class TimeManager : MonoBehaviour
         float timeRatio = secondsPassed / secondsFull;
 
         return timeRatio;
+    }
+
+    private IEnumerator UpdateTimeText()
+    {
+        timeToDisplay.text = DateTime.Now.ToString("h:mm tt");
+        yield return new WaitForSecondsRealtime(60);
     }
 }
