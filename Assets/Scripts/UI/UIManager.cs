@@ -1,20 +1,18 @@
 using UnityEngine;
+using Utility.Extensions;
 
 public class UIManager : MonoBehaviour
 {
     [SerializeField]
     private GameObject gameplayCanvas;
     [SerializeField]
-    private GameObject loadingGif;
-    [SerializeField]
-    private GameObject windowsBackground;
+    private GameObject loadingImage;
 
     public void StartGameplay()
     {
-        // Not the nicest solution, need to find more robust way.
-        StartCoroutine(gameplayCanvas.ToggleActiveAfterDelay(4.5f));
-        StartCoroutine(loadingGif.ToggleActiveAfterDelay(10));
-        StartCoroutine(windowsBackground.ToggleActiveAfterDelay(10));
+        //TODO: Not the best approach.
+        _ = loadingImage.ToggleActiveAfterDelay(4f);
+        _ = gameplayCanvas.ToggleActiveAfterDelay(10f);
     }
 
     public void ExitGame() => Application.Quit();

@@ -13,21 +13,18 @@ public class TimeManager : MonoBehaviour
     private Gradient timeOfDay;
 
 #if (UNITY_EDITOR)
-    [SerializeField]
-    [Range(0f, 1f), Tooltip("Value used for debugging only.")]
-    private float timePassed;
-
+    [Header("Debugging in Editor only")]
     [SerializeField]
     private bool testInEditor = false;
-#endif
 
     [SerializeField]
-    private TextMeshProUGUI timeToDisplay;
+    [Range(0f, 1f), Tooltip("Value used for debugging.")]
+    private float timePassedInEditor;
+#endif
 
     void Start()
     {
         StartCoroutine(UpdateTimeVisual());
-        StartCoroutine(UpdateTimeText());
     }
 
     void OnDestroy() => StopAllCoroutines();
@@ -38,7 +35,7 @@ public class TimeManager : MonoBehaviour
         {
 #if (UNITY_EDITOR)
             if (testInEditor)
-                viewImage.color = timeOfDay.Evaluate(timePassed);
+                viewImage.color = timeOfDay.Evaluate(timePassedInEditor);
             else
                 viewImage.color = timeOfDay.Evaluate(TimePassed());
 
@@ -62,11 +59,5 @@ public class TimeManager : MonoBehaviour
         float timeRatio = secondsPassed / secondsFull;
 
         return timeRatio;
-    }
-
-    private IEnumerator UpdateTimeText()
-    {
-        timeToDisplay.text = DateTime.Now.ToString("h:mm tt");
-        yield return new WaitForSecondsRealtime(60);
     }
 }

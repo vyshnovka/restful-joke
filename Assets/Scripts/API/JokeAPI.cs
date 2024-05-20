@@ -80,7 +80,7 @@ public static class JokeAPI
             // Handling response disposal via 'using' block.
             using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
             {
-                StreamReader reader = new StreamReader(response.GetResponseStream());
+                StreamReader reader = new(response.GetResponseStream());
                 string json = reader.ReadToEnd();
 
                 return JsonUtility.FromJson<Joke>(json);
