@@ -2,32 +2,35 @@ using System.Collections;
 using UnityEngine;
 using TMPro;
 
-public class MouseOverUI : MonoBehaviour
+namespace UI
 {
-    private TextMeshProUGUI menuItem;
-
-    void Awake() => menuItem = transform.GetComponentInChildren<TextMeshProUGUI>();
-
-    void OnEnable() => menuItem.text = menuItem.text.TrimEnd('|');
-
-    public void MouseEnter() => StartCoroutine(CarriagePing());
-
-    public void MouseExit()
+    public class MouseOverUI : MonoBehaviour
     {
-        StopAllCoroutines();
+        private TextMeshProUGUI menuItem;
 
-        menuItem.text = menuItem.text.TrimEnd('|');
-    }
+        void Awake() => menuItem = transform.GetComponentInChildren<TextMeshProUGUI>();
 
-    private IEnumerator CarriagePing()
-    {
-        while (true)
+        void OnEnable() => menuItem.text = menuItem.text.TrimEnd('|');
+
+        public void MouseEnter() => StartCoroutine(CarriagePing());
+
+        public void MouseExit()
         {
-            menuItem.text += "|";
-            yield return new WaitForSecondsRealtime(0.5f);
+            StopAllCoroutines();
 
             menuItem.text = menuItem.text.TrimEnd('|');
-            yield return new WaitForSecondsRealtime(0.5f);
+        }
+
+        private IEnumerator CarriagePing()
+        {
+            while (true)
+            {
+                menuItem.text += "|";
+                yield return new WaitForSecondsRealtime(0.5f);
+
+                menuItem.text = menuItem.text.TrimEnd('|');
+                yield return new WaitForSecondsRealtime(0.5f);
+            }
         }
     }
 }

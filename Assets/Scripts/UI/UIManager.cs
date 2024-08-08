@@ -1,19 +1,22 @@
 using UnityEngine;
 using Utility.Extensions;
 
-public class UIManager : MonoBehaviour
+namespace UI
 {
-    [SerializeField]
-    private GameObject gameplayCanvas;
-    [SerializeField]
-    private GameObject loadingImage;
-
-    public void StartGameplay()
+    public class UIManager : MonoBehaviour
     {
-        //TODO: Not the best approach.
-        _ = loadingImage.ToggleActiveAfterDelay(4f);
-        _ = gameplayCanvas.ToggleActiveAfterDelay(10f);
-    }
+        [SerializeField]
+        private GameObject gameplayCanvas;
+        [SerializeField]
+        private GameObject loadingImage;
 
-    public void ExitGame() => Application.Quit();
+        public void StartGameplay()
+        {
+            //TODO: Not the best approach.
+            _ = loadingImage.ToggleActiveAfterDelay(4f);
+            _ = gameplayCanvas.ToggleActiveAfterDelay(10f);
+        }
+
+        public void ExitGame() => Application.Quit();
+    }
 }
