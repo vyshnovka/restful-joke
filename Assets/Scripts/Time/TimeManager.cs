@@ -1,11 +1,13 @@
 using System;
 using System.Collections;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Utility.Helpers;
 
 public class TimeManager : MonoBehaviour
 {
+    public static TimeManager Instance { get; private set; }
+
     [SerializeField]
     private RawImage viewImage;
 
@@ -22,6 +24,8 @@ public class TimeManager : MonoBehaviour
     private float timePassedInEditor;
 #endif
 
+    public event Action<float> OnTimeUpdated;
+
     void Start()
     {
         StartCoroutine(UpdateTimeVisual());
@@ -37,7 +41,7 @@ public class TimeManager : MonoBehaviour
             if (testInEditor)
                 viewImage.color = timeOfDay.Evaluate(timePassedInEditor);
             else
-                viewImage.color = timeOfDay.Evaluate(TimePassed());
+                viewImage.color = timeOfDay.Evaluate(TimeHelpers.TimePassed());
 
             yield return new WaitForEndOfFrame();
 #else
@@ -45,19 +49,5 @@ public class TimeManager : MonoBehaviour
             yield return new WaitForSecondsRealtime(300);
 #endif
         }
-    }
-
-    /// <summary>Calculates time passed since midnight in seconds.</summary>
-    /// <returns>Returns time ratio (from 0 to 1).</returns>
-    private float TimePassed()
-    {
-        DateTime time = DateTime.Now;
-
-        float secondsPassed = time.Hour * 60 * 60 + time.Minute * 60 + time.Second;
-        float secondsFull = 24 * 60 * 60;
-
-        float timeRatio = secondsPassed / secondsFull;
-
-        return timeRatio;
     }
 }
