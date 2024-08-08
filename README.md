@@ -17,7 +17,7 @@ And it will be a bomb.
 
 ## Credits
 
-[Jokes API](https://v2.jokeapi.dev/) joke generator made by **Sv443**.    
+[JokeAPI](https://v2.jokeapi.dev/) joke generator made by **Sv443**.    
  
 [Table and monitor](https://sketchfab.com/3d-models/office-assets-16c1a779bb0a4055a26367741d39e059) were taken from the office 3D model by **Evan Petrov**. Other PC parts are from [old computer](https://sketchfab.com/3d-models/old-computer-839073b484e04c198ec96e6f7e067515) model.    
 [Nescafe mug](https://sketchfab.com/3d-models/nescafe-mug-838ea9a7905a4ccd822d086acfc750b0) by **Tiago Lopes** fits the vibe just right.     
