@@ -1,30 +1,21 @@
 using System;
 using System.Collections;
 using UnityEngine;
-using UnityEngine.UI;
 using Utility.Helpers;
 
 namespace Internal.Time
 {
     public class TimeManager : MonoBehaviour
     {
-        public static TimeManager Instance { get; private set; }
-
-        [SerializeField]
-        private RawImage viewImage;
-
-        [SerializeField]
-        private Gradient timeOfDay;
-
-    #if (UNITY_EDITOR)
-        [Header("Debugging in Editor only")]
+#if (UNITY_EDITOR)
+        [Tooltip("Available and used in Editor only!")]
         [SerializeField]
         private bool testInEditor = false;
 
         [SerializeField]
         [Range(0f, 1f), Tooltip("Value used for debugging.")]
         private float timePassedInEditor;
-    #endif
+#endif
 
         public event Action<float> OnTimeUpdated;
 
@@ -39,17 +30,17 @@ namespace Internal.Time
         {
             while (true)
             {
-    #if (UNITY_EDITOR)
+#if (UNITY_EDITOR)
                 if (testInEditor)
-                    viewImage.color = timeOfDay.Evaluate(timePassedInEditor);
+                    OnTimeUpdated?.Invoke(timePassedInEditor);
                 else
-                    viewImage.color = timeOfDay.Evaluate(TimeHelpers.TimePassed());
+                    OnTimeUpdated?.Invoke(TimeHelpers.TimePassed());
 
                 yield return new WaitForEndOfFrame();
-    #else
-                viewImage.color = timeOfDay.Evaluate(TimePassed());
+#else
+                OnTimeUpdated.Invoke(TimeHelpers.TimePassed());
                 yield return new WaitForSecondsRealtime(300);
-    #endif
+#endif
             }
         }
     }

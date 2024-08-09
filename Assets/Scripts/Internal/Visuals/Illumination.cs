@@ -5,9 +5,16 @@ namespace Internal.Visuals
 {
     public abstract class Illumination : MonoBehaviour
     {
-        void OnEnable() => TimeManager.Instance.OnTimeUpdated += UpdateTimeVisual;
+        private TimeManager timeManager;
 
-        void OnDisable() => TimeManager.Instance.OnTimeUpdated -= UpdateTimeVisual;
+        //TODO: Not the best approach with looking for an object.
+        void OnEnable()
+        {
+            timeManager = FindObjectOfType<TimeManager>();
+            timeManager.OnTimeUpdated += UpdateTimeVisual;
+        }
+
+        void OnDisable() => timeManager.OnTimeUpdated -= UpdateTimeVisual;
 
         public abstract void UpdateTimeVisual(float timePassed);
     }

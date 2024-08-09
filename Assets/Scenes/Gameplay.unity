@@ -7012,7 +7012,7 @@ Light:
   m_Type: 1
   m_Shape: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 0.7
+  m_Intensity: 0.2
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -7112,6 +7112,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca597463cb04d0143a4ba364508f4f3b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  globalLight: {fileID: 410087040}
+  minIntensity: 0.2
+  maxIntensity: 1
 --- !u!1 &418413798
 GameObject:
   m_ObjectHideFlags: 0
@@ -9018,6 +9021,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 346e02baf782afe4dac65eba7db8b16e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  viewImage: {fileID: 566961003}
+  colorGradient:
+    serializedVersion: 2
+    key0: {r: 0.1, g: 0.1, b: 0.1, a: 1}
+    key1: {r: 0.16862746, g: 0.16862746, b: 0.16862746, a: 1}
+    key2: {r: 0.8773585, g: 0.8773585, b: 0.8773585, a: 0}
+    key3: {r: 1, g: 1, b: 1, a: 0}
+    key4: {r: 0.9622642, g: 0.9622642, b: 0.9622642, a: 0}
+    key5: {r: 0.16981131, g: 0.16981131, b: 0.16981131, a: 0}
+    key6: {r: 0.1, g: 0.1, b: 0.1, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 0
+    ctime1: 10794
+    ctime2: 21010
+    ctime3: 32768
+    ctime4: 46838
+    ctime5: 55127
+    ctime6: 65535
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_ColorSpace: -1
+    m_NumColorKeys: 7
+    m_NumAlphaKeys: 2
 --- !u!1 &721941678
 GameObject:
   m_ObjectHideFlags: 0
@@ -13016,37 +13050,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: edf2fb00e47c81440ad85c0cbcdade7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  viewImage: {fileID: 566961003}
-  timeOfDay:
-    serializedVersion: 2
-    key0: {r: 0.1, g: 0.1, b: 0.1, a: 1}
-    key1: {r: 0.16862746, g: 0.16862746, b: 0.16862746, a: 1}
-    key2: {r: 0.8773585, g: 0.8773585, b: 0.8773585, a: 0}
-    key3: {r: 1, g: 1, b: 1, a: 0}
-    key4: {r: 0.9622642, g: 0.9622642, b: 0.9622642, a: 0}
-    key5: {r: 0.16981131, g: 0.16981131, b: 0.16981131, a: 0}
-    key6: {r: 0.1, g: 0.1, b: 0.1, a: 0}
-    key7: {r: 0, g: 0, b: 0, a: 0}
-    ctime0: 0
-    ctime1: 10794
-    ctime2: 21010
-    ctime3: 32768
-    ctime4: 46838
-    ctime5: 55127
-    ctime6: 65535
-    ctime7: 0
-    atime0: 0
-    atime1: 65535
-    atime2: 0
-    atime3: 0
-    atime4: 0
-    atime5: 0
-    atime6: 0
-    atime7: 0
-    m_Mode: 0
-    m_ColorSpace: -1
-    m_NumColorKeys: 7
-    m_NumAlphaKeys: 2
   testInEditor: 0
   timePassedInEditor: 0
 --- !u!1 &1697451742

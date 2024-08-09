@@ -384,6 +384,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0608b7c508aa8e148ade556d197f3383, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  lamp: {fileID: 109558728449587927}
+  timeWithLightON:
+  - startTime: 0
+    endTime: 0.25
+  - startTime: 0.8
+    endTime: 1
 --- !u!1 &1186882738669294208
 GameObject:
   m_ObjectHideFlags: 0
