@@ -1,19 +1,11 @@
-using TMPro;
 using UnityEngine;
 
 namespace External.JokeAPI
 {
+    //? Do I even need this?..
     public class JokeManager : MonoBehaviour
     {
-        [SerializeField]
-        private TextMeshProUGUI jokeText;
-
-        public void GetJoke()
-        {
-            Joke joke = JokeAPI.GenerateJoke();
-
-            jokeText.text = joke.joke;
-        }
+        public string GetJoke() => JokeAPI.GenerateJoke().joke;
     }
 }
 
