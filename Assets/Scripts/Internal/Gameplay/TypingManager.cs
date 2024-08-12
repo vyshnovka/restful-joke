@@ -3,7 +3,7 @@ using TMPro;
 using System.Collections;
 using External.JokeAPI;
 
-namespace Gameplay
+namespace Internal.Gameplay
 {
     public class TypingManager : MonoBehaviour
     {
@@ -29,7 +29,7 @@ namespace Gameplay
         private bool isCorrectLetter;
         private bool isSentenceComplete = false;
 
-        private void Start()
+        void Start()
         {
             sentenceToType = JokeAPI.GenerateJoke().joke; //? What about JokeManager?
             sentenceToType = sentenceToType.Replace("\n", " ");
@@ -38,7 +38,7 @@ namespace Gameplay
             UpdateTypingText();
         }
 
-        private void Update()
+        void Update()
         {
             if (Input.anyKeyDown && !isSentenceComplete)
             {
@@ -83,7 +83,7 @@ namespace Gameplay
 
         private void UpdateTypingText()
         {
-            string typedPart = sentenceToType.Substring(0, currentLetterIndex);
+            string typedPart = sentenceToType[..currentLetterIndex];
             string nextLetter = currentLetterIndex < sentenceToType.Length ? sentenceToType[currentLetterIndex].ToString() : "";
 
             string displayNextLetter = nextLetter == " " ? "[space]" : nextLetter;
@@ -104,6 +104,7 @@ namespace Gameplay
         {
             while (!isSentenceComplete)
             {
+                //! Issue when the new line starts.
                 typingSymbol = typingSymbol == '|' ? ' ' : '|';
                 UpdateTypingText();
                 yield return new WaitForSeconds(blinkSpeed);

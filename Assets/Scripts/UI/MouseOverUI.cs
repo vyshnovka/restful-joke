@@ -21,6 +21,7 @@ namespace UI
             menuItem.text = menuItem.text.TrimEnd('|');
         }
 
+        //TODO: Same as TypingManager.BlinkTypingSymbol(). Reuse!
         private IEnumerator CarriagePing()
         {
             while (true)
