@@ -23,7 +23,7 @@ namespace Internal.Gameplay
         [SerializeField]
         private float blinkSpeed = 0.5f;
 
-        private string sentenceToType = "Type this. Yeah, like that...";
+        private string sentenceToType = "Type this.\nYeah, like that...";
         private int currentLetterIndex;
         private bool isKeyHeld;
         private bool isCorrectLetter;
@@ -31,7 +31,7 @@ namespace Internal.Gameplay
 
         void Start()
         {
-            sentenceToType = JokeAPI.GenerateJoke().joke; //? What about JokeManager?
+            //sentenceToType = JokeAPI.GenerateJoke().joke; //? What about JokeManager?
             sentenceToType = sentenceToType.Replace("\n", " ");
             currentLetterIndex = 0;
             StartCoroutine(BlinkTypingSymbol());
@@ -91,7 +91,7 @@ namespace Internal.Gameplay
 
             if (!string.IsNullOrEmpty(nextLetter))
             {
-                typingText.text = $"{typedPart}<color=#{currentColor}>{typingSymbol}{displayNextLetter}</color>";
+                typingText.text = $"{typedPart}{typingSymbol}<color=#{currentColor}>{displayNextLetter}</color>";
             }
             else
             {
