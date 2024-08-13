@@ -15,6 +15,7 @@ namespace UI
             //TODO: Not the best approach.
             _ = loadingImage.ToggleActiveAfterDelay(4f);
             _ = gameplayCanvas.ToggleActiveAfterDelay(10f);
+            _ = loadingImage.ToggleActiveAfterDelay(11f);
         }
 
         public void ExitGame() => Application.Quit();
