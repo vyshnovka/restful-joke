@@ -9,7 +9,9 @@ namespace Internal.Gameplay
     {
         [Header("UI References")]
         [SerializeField]
-        private TextMeshProUGUI typingText;
+        private TextMeshProUGUI typingZone;
+        [SerializeField]
+        private TextMeshProUGUI nextText;
 
         [SerializeField]
         private Color nextLetterColor = Color.gray;
@@ -21,66 +23,86 @@ namespace Internal.Gameplay
         [SerializeField]
         private string typingSymbol = "|";
 
-        private string sentenceToType = "Type this.\nYeah, like that...";
+        private string sentenceToType = "Type this."; //TODO: Make this for debug only.
         private int currentLetterIndex;
         private bool isKeyHeld;
         private bool isCorrectLetter;
+        private bool isSentenceCompleted = false;
+        private bool isBlinking = false; //! BAD. Just for testing.
 
         void Start()
         {
-            //sentenceToType = JokeAPI.GenerateJoke().joke; //? What about JokeManager?
-            sentenceToType = sentenceToType.Replace("\n", " ");
-            currentLetterIndex = 0;
-            StartCoroutine(UIHelpers.BlinkContent(
-                " ",
-                "|",
-                (newText) =>
-                {
-                    typingSymbol = newText;
-                    UpdateTypingText();
-                },
-                0.5f));
-            UpdateTypingText();
+            Reset();
         }
 
         void Update()
         {
-            if (Input.anyKeyDown)
+            if (!isSentenceCompleted)
             {
-                if (!string.IsNullOrEmpty(Input.inputString))
+                if (Input.anyKeyDown)
                 {
-                    char inputChar = Input.inputString.ToLower()[0];
-                    isKeyHeld = true;
+                    if (!string.IsNullOrEmpty(Input.inputString))
+                    {
+                        char inputChar = Input.inputString.ToLower()[0];
+                        isKeyHeld = true;
 
-                    if (inputChar == sentenceToType[currentLetterIndex].ToString().ToLower()[0])
-                    {
-                        isCorrectLetter = true;
-                        UpdateTypingText();
+                        if (inputChar == sentenceToType[currentLetterIndex].ToString().ToLower()[0])
+                        {
+                            isCorrectLetter = true;
+                            UpdateTypingText();
+                        }
+                        else
+                        {
+                            isCorrectLetter = false;
+                            UpdateTypingText();
+                        }
                     }
-                    else
+                }
+
+                if (!Input.anyKey && isKeyHeld)
+                {
+                    isKeyHeld = false;
+
+                    if (isCorrectLetter)
                     {
-                        isCorrectLetter = false;
-                        UpdateTypingText();
+                        currentLetterIndex++;
+                    }
+
+                    isCorrectLetter = false;
+                    UpdateTypingText();
+
+                    if (currentLetterIndex >= sentenceToType.Length)
+                    {
+                        isSentenceCompleted = true;
+                        StopAllCoroutines();
+                        typingZone.text = sentenceToType;
                     }
                 }
             }
-
-            if (!Input.anyKey && isKeyHeld)
+            else
             {
-                isKeyHeld = false;
-
-                if (isCorrectLetter)
+                if (!isBlinking)
                 {
-                    currentLetterIndex++;
+                    nextText.gameObject.SetActive(true);
+
+                    StartCoroutine(UIHelpers.BlinkContent(
+                    " ",
+                    nextText.text, //? This is a workaround for the text to not get deleted.
+                    (newText) =>
+                    {
+                        nextText.text = newText;
+                    },
+                    0.5f));
+
+                    isBlinking = true;
                 }
 
-                isCorrectLetter = false;
-                UpdateTypingText();
-
-                if (currentLetterIndex >= sentenceToType.Length)
+                if (Input.GetKeyUp(KeyCode.Return))
                 {
+                    nextText.gameObject.SetActive(false);
+                    isBlinking = false;
                     StopAllCoroutines();
-                    typingText.text = sentenceToType;
+                    Reset();
                 }
             }
         }
@@ -95,12 +117,30 @@ namespace Internal.Gameplay
 
             if (!string.IsNullOrEmpty(nextLetter))
             {
-                typingText.text = $"{typedPart}{typingSymbol}<color=#{currentColor}>{displayNextLetter}</color>";
+                typingZone.text = $"{typedPart}{typingSymbol}<color=#{currentColor}>{displayNextLetter}</color>";
             }
             else
             {
-                typingText.text = $"{typedPart}{typingSymbol}";
+                typingZone.text = $"{typedPart}{typingSymbol}";
             }
+        }
+
+        private void Reset()
+        {
+            //sentenceToType = JokeAPI.GenerateJoke().joke; //? What about JokeManager?
+            sentenceToType = sentenceToType.Replace("\n", " ");
+            currentLetterIndex = 0;
+            isSentenceCompleted = false;
+            StartCoroutine(UIHelpers.BlinkContent(
+                " ",
+                "|",
+                (newText) =>
+                {
+                    typingSymbol = newText;
+                    UpdateTypingText();
+                },
+                0.5f));
+            UpdateTypingText();
         }
     }
 }
