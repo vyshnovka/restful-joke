@@ -11,7 +11,7 @@ namespace Internal.Gameplay
         [SerializeField]
         private TextMeshProUGUI typingZone;
         [SerializeField]
-        private TextMeshProUGUI nextText;
+        private TextMeshProUGUI nextTextZone;
 
         [SerializeField]
         private Color nextLetterColor = Color.gray;
@@ -22,6 +22,8 @@ namespace Internal.Gameplay
 
         [SerializeField]
         private string typingSymbol = "|";
+        [SerializeField]
+        private string nextText = "Press [Enter] to continue...";
 
         private string sentenceToType = "Type this."; //TODO: Make this for debug only.
         private int currentLetterIndex;
@@ -83,23 +85,25 @@ namespace Internal.Gameplay
             {
                 if (!isBlinking)
                 {
-                    nextText.gameObject.SetActive(true);
+                    //? This is a temp solution. Need to find a better one.
+                    nextTextZone.gameObject.SetActive(true);
+                    nextTextZone.text = nextText;
 
                     StartCoroutine(UIHelpers.BlinkContent(
-                    " ",
-                    nextText.text, //? This is a workaround for the text to not get deleted.
-                    (newText) =>
-                    {
-                        nextText.text = newText;
-                    },
-                    0.5f));
+                        nextText,
+                        " ",
+                        (newText) =>
+                        {
+                            nextTextZone.text = newText;
+                        },
+                        0.5f));
 
                     isBlinking = true;
                 }
 
                 if (Input.GetKeyUp(KeyCode.Return))
                 {
-                    nextText.gameObject.SetActive(false);
+                    nextTextZone.gameObject.SetActive(false);
                     isBlinking = false;
                     StopAllCoroutines();
                     Reset();

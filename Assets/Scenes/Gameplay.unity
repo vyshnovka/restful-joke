@@ -8784,7 +8784,7 @@ GameObject:
   - component: {fileID: 715712238}
   - component: {fileID: 715712237}
   m_Layer: 5
-  m_Name: Joke
+  m_Name: Typing
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8829,9 +8829,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Some joke to tell. Maybe a longer one? For sure. I need to see a long one
-    here!!! With text, text, text, text, text, text, text, text, text, text, text,
-    text, text.
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: bc506aaa1f67d824c9e59163276e0471, type: 2}
   m_sharedMaterial: {fileID: 859480035365896443, guid: bc506aaa1f67d824c9e59163276e0471,
@@ -12430,11 +12428,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   typingZone: {fileID: 715712237}
-  nextText: {fileID: 621106637}
+  nextTextZone: {fileID: 621106637}
   nextLetterColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   wrongLetterColor: {r: 0.7169812, g: 0, b: 0, a: 1}
   rightLetterColor: {r: 0.3137255, g: 0.49411765, b: 0.14901961, a: 1}
   typingSymbol: '|'
+  nextText: Press [Enter] to continue...
 --- !u!1 &1621448653
 GameObject:
   m_ObjectHideFlags: 0
