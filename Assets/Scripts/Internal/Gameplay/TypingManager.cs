@@ -1,7 +1,7 @@
-using UnityEngine;
-using TMPro;
-using System.Collections;
 using External.JokeAPI;
+using TMPro;
+using UnityEngine;
+using Utility.Helpers;
 
 namespace Internal.Gameplay
 {
@@ -19,28 +19,33 @@ namespace Internal.Gameplay
         private Color rightLetterColor = Color.green;
 
         [SerializeField]
-        private char typingSymbol = '|';
-        [SerializeField]
-        private float blinkSpeed = 0.5f;
+        private string typingSymbol = "|";
 
         private string sentenceToType = "Type this.\nYeah, like that...";
         private int currentLetterIndex;
         private bool isKeyHeld;
         private bool isCorrectLetter;
-        private bool isSentenceComplete = false;
 
         void Start()
         {
             //sentenceToType = JokeAPI.GenerateJoke().joke; //? What about JokeManager?
             sentenceToType = sentenceToType.Replace("\n", " ");
             currentLetterIndex = 0;
-            StartCoroutine(BlinkTypingSymbol());
+            StartCoroutine(UIHelpers.BlinkContent(
+                " ",
+                "|",
+                (newText) =>
+                {
+                    typingSymbol = newText;
+                    UpdateTypingText();
+                },
+                0.5f));
             UpdateTypingText();
         }
 
         void Update()
         {
-            if (Input.anyKeyDown && !isSentenceComplete)
+            if (Input.anyKeyDown)
             {
                 if (!string.IsNullOrEmpty(Input.inputString))
                 {
@@ -74,8 +79,7 @@ namespace Internal.Gameplay
 
                 if (currentLetterIndex >= sentenceToType.Length)
                 {
-                    isSentenceComplete = true;
-                    StopCoroutine(BlinkTypingSymbol());
+                    StopAllCoroutines();
                     typingText.text = sentenceToType;
                 }
             }
@@ -96,18 +100,6 @@ namespace Internal.Gameplay
             else
             {
                 typingText.text = $"{typedPart}{typingSymbol}";
-            }
-        }
-
-        //TODO: Same logic in menu UI. Reuse the code!!!
-        private IEnumerator BlinkTypingSymbol()
-        {
-            while (!isSentenceComplete)
-            {
-                //! Issue when the new line starts.
-                typingSymbol = typingSymbol == '|' ? ' ' : '|';
-                UpdateTypingText();
-                yield return new WaitForSeconds(blinkSpeed);
             }
         }
     }
