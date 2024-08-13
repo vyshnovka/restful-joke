@@ -9367,7 +9367,31 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
+      - m_Target: {fileID: 1536729054}
+        m_TargetAssemblyTypeName: Internal.Camera.CameraManager, Assembly-CSharp
+        m_MethodName: SwitchCameraByName
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: Menu
+          m_BoolArgument: 1
+        m_CallState: 2
       - m_Target: {fileID: 1903034396}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1573626979}
         m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
         m_MethodName: SetActive
         m_Mode: 6
@@ -9965,9 +9989,9 @@ MonoBehaviour:
   sourceSFX: {fileID: 721941680}
   soundsMain:
   - {fileID: 11400000, guid: d79ab0710d074654a81ed9347f6fbab1, type: 2}
-  - {fileID: 11400000, guid: d79ab0710d074654a81ed9347f6fbab1, type: 2}
   soundsSFX:
   - {fileID: 11400000, guid: 7d8f0f9a9da5ee34fad60608a1ebaee3, type: 2}
+  - {fileID: 11400000, guid: b95bc6e6b2b3d314e9206a4e5c054b83, type: 2}
 --- !u!1 &935382849
 GameObject:
   m_ObjectHideFlags: 0
@@ -14671,7 +14695,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1903034397
 RectTransform:
   m_ObjectHideFlags: 0
