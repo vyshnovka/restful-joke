@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using Utility.DataStructures;
 
 namespace Utility.Helpers
 {
@@ -40,6 +41,23 @@ namespace Utility.Helpers
                 setText.Invoke(blinkState2);
                 yield return new WaitForSecondsRealtime(interval);
             }
+        }
+    }
+
+    public static class NumericHelpers
+    {
+        /// <summary>Determines whether a given numeric value falls within any of the specified intervals.</summary>
+        /// <param name="number">The numeric value to check against the intervals.</param>
+        /// <param name="intervals">An array of time intervals, each defined by a start and end time.</param>
+        /// <returns>Returns <c>true</c> if the value is within any of the specified intervals and <c>false</c> otherwise.</returns>
+        public static bool IsInIntervals<T>(T number, NumericInterval<T>[] intervals) where T : IComparable<T>
+        {
+            foreach (var interval in intervals)
+            {
+                if (number.CompareTo(interval.start) >= 0 && number.CompareTo(interval.end) <= 0)
+                    return true;
+            }
+            return false;
         }
     }
 }
