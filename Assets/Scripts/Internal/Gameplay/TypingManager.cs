@@ -32,83 +32,90 @@ namespace Internal.Gameplay
         private bool isSentenceCompleted = false;
         private bool isBlinking = false; //! BAD. Just for testing.
 
-        void Start()
-        {
-            Reset();
-        }
+        void Start() => Reset();
 
         void Update()
         {
             if (!isSentenceCompleted)
             {
-                if (Input.anyKeyDown)
-                {
-                    if (!string.IsNullOrEmpty(Input.inputString))
-                    {
-                        char inputChar = Input.inputString.ToLower()[0];
-                        isKeyHeld = true;
-
-                        if (inputChar == sentenceToType[currentLetterIndex].ToString().ToLower()[0])
-                        {
-                            isCorrectLetter = true;
-                            UpdateTypingText();
-                        }
-                        else
-                        {
-                            isCorrectLetter = false;
-                            UpdateTypingText();
-                        }
-                    }
-                }
-
-                if (!Input.anyKey && isKeyHeld)
-                {
-                    isKeyHeld = false;
-
-                    if (isCorrectLetter)
-                    {
-                        currentLetterIndex++;
-                    }
-
-                    isCorrectLetter = false;
-                    UpdateTypingText();
-
-                    if (currentLetterIndex >= sentenceToType.Length)
-                    {
-                        isSentenceCompleted = true;
-                        StopAllCoroutines();
-                        typingZone.text = sentenceToType;
-                    }
-                }
+                HandleTypingInput();
             }
             else
             {
-                if (!isBlinking)
+                HandleSentenceCompletion();
+            }
+        }
+
+        private void HandleTypingInput()
+        {
+            if (Input.anyKeyDown && !string.IsNullOrEmpty(Input.inputString))
+            {
+                char inputChar = Input.inputString.ToLower()[0];
+                isKeyHeld = true;
+
+                isCorrectLetter = inputChar == sentenceToType[currentLetterIndex].ToString().ToLower()[0];
+                UpdateTypingText();
+            }
+
+            if (!Input.anyKey && isKeyHeld)
+            {
+                isKeyHeld = false;
+
+                if (isCorrectLetter)
                 {
-                    //? This is a temp solution. Need to find a better one.
-                    nextTextZone.gameObject.SetActive(true);
-                    nextTextZone.text = nextText;
-
-                    StartCoroutine(UIHelpers.BlinkContent(
-                        nextText,
-                        " ",
-                        (newText) =>
-                        {
-                            nextTextZone.text = newText;
-                        },
-                        0.5f));
-
-                    isBlinking = true;
+                    currentLetterIndex++;
                 }
 
-                if (Input.GetKeyUp(KeyCode.Return))
+                isCorrectLetter = false;
+                UpdateTypingText();
+
+                if (currentLetterIndex >= sentenceToType.Length)
                 {
-                    nextTextZone.gameObject.SetActive(false);
-                    isBlinking = false;
-                    StopAllCoroutines();
-                    Reset();
+                    CompleteSentence();
                 }
             }
+        }
+
+        private void CompleteSentence()
+        {
+            isSentenceCompleted = true;
+            StopAllCoroutines();
+            typingZone.text = sentenceToType;
+        }
+
+        private void HandleSentenceCompletion()
+        {
+            if (!isBlinking)
+            {
+                StartBlinking();
+            }
+
+            if (Input.GetKeyUp(KeyCode.Return))
+            {
+                StopBlinking();
+                Reset();
+            }
+        }
+
+        private void StartBlinking()
+        {
+            nextTextZone.gameObject.SetActive(true);
+            nextTextZone.text = nextText;
+
+            StartCoroutine(UIHelpers.BlinkContent(
+                nextText,
+                " ",
+                newText => nextTextZone.text = newText,
+                0.5f));
+
+            isBlinking = true;
+        }
+
+        private void StopBlinking()
+        {
+            nextTextZone.gameObject.SetActive(false);
+            isBlinking = false;
+            StopAllCoroutines();
         }
 
         private void UpdateTypingText()
@@ -131,7 +138,8 @@ namespace Internal.Gameplay
 
         private void Reset()
         {
-            //sentenceToType = JokeAPI.GenerateJoke().joke; //? What about JokeManager?
+            //? What about JokeManager?
+            //sentenceToType = JokeAPI.GenerateJoke().joke;
             sentenceToType = sentenceToType.Replace("\n", " ");
             currentLetterIndex = 0;
             isSentenceCompleted = false;
