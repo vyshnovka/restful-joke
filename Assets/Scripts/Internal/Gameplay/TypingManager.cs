@@ -7,6 +7,12 @@ namespace Internal.Gameplay
 {
     public class TypingManager : MonoBehaviour
     {
+#if (UNITY_EDITOR)
+        [Tooltip("Available and used in Editor only!")]
+        [SerializeField]
+        private bool testInEditor = false;
+#endif
+
         [Header("UI References")]
         [SerializeField]
         private TextMeshProUGUI typingZone;
@@ -25,8 +31,10 @@ namespace Internal.Gameplay
         [SerializeField]
         private string nextText = "Press [Enter] to continue...";
 
-        private string sentenceToType = "Type this."; //TODO: Make this for debug only.
+        private string sentenceToType;
         private int currentLetterIndex;
+
+        //TODO: Make a state machine out of all the flags.
         private bool isKeyHeld;
         private bool isCorrectLetter;
         private bool isSentenceCompleted = false;
@@ -138,8 +146,15 @@ namespace Internal.Gameplay
 
         private void Reset()
         {
+#if (UNITY_EDITOR)
+            if (testInEditor)
+                sentenceToType = "Testing the code.\nHello!";
+            else
+                sentenceToType = JokeAPI.GenerateJoke().joke;
+#else
             //? What about JokeManager?
-            //sentenceToType = JokeAPI.GenerateJoke().joke;
+            sentenceToType = JokeAPI.GenerateJoke().joke;
+#endif
             sentenceToType = sentenceToType.Replace("\n", " ");
             currentLetterIndex = 0;
             isSentenceCompleted = false;

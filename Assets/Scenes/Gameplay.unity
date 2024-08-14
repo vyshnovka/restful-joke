@@ -12415,6 +12415,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e63bc3b7ec21874297ded1fe386df41, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  testInEditor: 0
   typingZone: {fileID: 715712237}
   nextTextZone: {fileID: 621106637}
   nextLetterColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
