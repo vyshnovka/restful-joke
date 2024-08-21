@@ -18,6 +18,7 @@ namespace External.JokeAPI
 
             toggle.isOn = PlayerPrefs.GetInt(toggleValue.ToString(), 1) == 1;
         }
+
         void OnDisable() => toggle.onValueChanged.RemoveAllListeners();
 
         /// <summary>Saves toggle value to <see cref="PlayerPrefs"/>.</summary>
