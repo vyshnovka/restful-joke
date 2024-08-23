@@ -8,16 +8,23 @@ namespace UI
         [SerializeField]
         private GameObject gameplayCanvas;
         [SerializeField]
-        private GameObject loadingImage;
+        private GameObject loadingCanvas;
+        [SerializeField]
+        private GameObject creditsCanvas;
 
         public void StartGameplay()
         {
             //TODO: Not the best approach.
-            _ = loadingImage.ToggleActiveAfterDelay(4f);
+            _ = loadingCanvas.ToggleActiveAfterDelay(4f);
             _ = gameplayCanvas.ToggleActiveAfterDelay(10f);
-            _ = loadingImage.ToggleActiveAfterDelay(11f);
+            _ = loadingCanvas.ToggleActiveAfterDelay(11f);
         }
 
         public void ExitGame() => Application.Quit();
+
+        public void EnableCredits()
+        {
+            _ = creditsCanvas.ToggleActiveAfterDelay(15f);
+        }
     }
 }
