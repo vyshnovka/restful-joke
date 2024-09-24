@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c94671edd5c0bf46ab78af481e95cbc, type: 3}
+  m_Name: Sound Library
+  m_EditorClassIdentifier: 
+  soundCategories:
+  - categoryName: Keys
+    sounds:
+    - {fileID: 11400000, guid: abec61e345e30d04e960e5818fdf6672, type: 2}
+    - {fileID: 11400000, guid: bce05f3e474d15f449244d6f9bc79c76, type: 2}
+    - {fileID: 11400000, guid: 6ef9453818016ea499817e28062fc434, type: 2}
+  - categoryName: Wrong
+    sounds:
+    - {fileID: 11400000, guid: 1b4f6885bf83dff42afa9cbfc487ddd1, type: 2}
+  - categoryName: Spacebar
+    sounds:
+    - {fileID: 11400000, guid: 0370baa7605a92b46bb31fe0de7793b4, type: 2}
+  - categoryName: Button
+    sounds:
+    - {fileID: 11400000, guid: 7d8f0f9a9da5ee34fad60608a1ebaee3, type: 2}
+  - categoryName: Computer
+    sounds:
+    - {fileID: 11400000, guid: d79ab0710d074654a81ed9347f6fbab1, type: 2}

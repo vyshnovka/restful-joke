@@ -1,37 +1,81 @@
-using System.Collections.Generic;
+using System;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace Internal.Audio
 {
     public class AudioManager : MonoBehaviour
     {
+        public static Action<string, string> OnPlaySound;
+        public static Action<string, string, bool, float> OnPlayBackgroundSound;
+
+        [Header("Sound Sources")]
         [SerializeField]
         private AudioSource sourceMain;
         [SerializeField]
         private AudioSource sourceSFX;
 
+        [Header("Sound Library")]
         [SerializeField]
-        private List<Sound> soundsMain = new();
-        [SerializeField] 
-        private List<Sound> soundsSFX = new();
+        private SoundLibrary soundLibrary;
 
-        public void PlaySFXSound(string name)
+        void OnEnable()
         {
-            var sound = soundsSFX.Find(x => x.Name == name);
-
-            Debug.Assert(sound != null, $"SFX sound with name {name} not found.");
-            sourceSFX.PlayOneShot(sound?.Clip);
+            OnPlaySound += PlaySoundFromCategory;
+            OnPlayBackgroundSound += PlayBackgroundSoundFromCategory;
         }
 
-        public void PlayMainSound(string name, bool loop = true, float delay = 0f)
+        void OnDisable()
         {
-            var sound = soundsMain.Find(x => x.Name == name);
+            OnPlaySound -= PlaySoundFromCategory;
+            OnPlayBackgroundSound -= PlayBackgroundSoundFromCategory;
+        }
 
-            Debug.Assert(sound != null, $"Theme sound with name {name} not found.");
+        /// <summary>Play sound once with no loop from a separate source. Used for SFX sounds.</summary>
+        /// <param name="categoryName">Category name.</param>
+        /// <param name="soundName">>Sound to play. If not specified, random sound is playes.</param>
+        private void PlaySoundFromCategory(string categoryName, string soundName = null)
+        {
+            Sound sound;
 
-            sourceMain.clip = sound?.Clip;
+            if (soundName != null)
+            {
+                sound = soundLibrary.GetSound(categoryName, soundName);
+            }
+            else
+            {
+                var category = soundLibrary.GetSoundCategory(categoryName);
+                sound = category[UnityEngine.Random.Range(0, category.Count)];
+            }
+
+            PlaySound(sound);
+        }
+
+        /// <summary></summary>
+        /// <param name="categoryName">Category name.</param>
+        /// <param name="soundName">>Sound to play.</param>
+        /// <param name="loop">Loop by default.</param>
+        /// <param name="delay">No delay by default.</param>
+        private void PlayBackgroundSoundFromCategory(string categoryName, string soundName, bool loop = true, float delay = 0f)
+        {
+            var sound = soundLibrary.GetSound(categoryName, soundName);
+            PlayBackgroundSound(sound, loop, delay);
+        }
+
+        private void PlaySound(Sound sound)
+        {
+            Debug.Assert(sound != null && sound.Clip != null, "Invalid SFX sound passed.");
+
+            sourceSFX.PlayOneShot(sound.Clip);
+        }
+
+        private void PlayBackgroundSound(Sound sound, bool loop, float delay)
+        {
+            Debug.Assert(sound != null && sound.Clip != null, $"Invalid theme sound passed.");
+
+            sourceMain.clip = sound.Clip;
             sourceMain.loop = loop;
-
             sourceMain.PlayDelayed(delay);
         }
     }
