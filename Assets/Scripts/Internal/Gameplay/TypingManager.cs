@@ -1,4 +1,5 @@
 using External.JokeAPI;
+using Internal.Audio;
 using TMPro;
 using UnityEngine;
 using Utility.Helpers;
@@ -58,6 +59,9 @@ namespace Internal.Gameplay
         {
             if (Input.anyKeyDown && !string.IsNullOrEmpty(Input.inputString))
             {
+                //TODO: Handle Space and wrong key!!!
+                AudioManager.OnPlaySound.Invoke("Keys", null);
+
                 char inputChar = Input.inputString.ToLower()[0];
                 isKeyHeld = true;
 
