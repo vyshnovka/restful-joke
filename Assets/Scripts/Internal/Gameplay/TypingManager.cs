@@ -109,6 +109,7 @@ namespace Internal.Gameplay
             }
         }
 
+        //TODO: Separate from typing, this is clearly UI!
         private void StartBlinking()
         {
             nextTextZone.gameObject.SetActive(true);
@@ -118,7 +119,7 @@ namespace Internal.Gameplay
                 nextText,
                 " ",
                 newText => nextTextZone.text = newText,
-                0.5f));
+                0.75f));
 
             isBlinking = true;
         }
