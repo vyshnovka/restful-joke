@@ -100,8 +100,10 @@ namespace Internal.Gameplay
                 StartBlinking();
             }
 
-            if (Input.GetKeyUp(KeyCode.Return))
+            if (Input.GetKeyDown(KeyCode.Return))
             {
+                AudioManager.OnPlaySound.Invoke("Other Keys", "Spacebar Key");
+
                 StopBlinking();
                 Reset();
             }
