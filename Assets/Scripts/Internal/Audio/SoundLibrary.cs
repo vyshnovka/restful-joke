@@ -30,7 +30,7 @@ namespace Internal.Audio
 
             var sound = sounds.Find(x => x.Name == soundName);
 
-            Debug.Assert(sound == null, $"Missing sound {soundName} from {categoryName}!");
+            Debug.Assert(sound != null, $"Missing sound {soundName} from {categoryName}!");
 
             return sound;
         }
