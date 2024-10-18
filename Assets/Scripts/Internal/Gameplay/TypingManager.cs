@@ -59,13 +59,11 @@ namespace Internal.Gameplay
         {
             if (Input.anyKeyDown && !string.IsNullOrEmpty(Input.inputString))
             {
-                //TODO: Handle Space and wrong key!!!
-                AudioManager.OnPlaySound.Invoke("Keys", null);
-
                 char inputChar = Input.inputString.ToLower()[0];
                 isKeyHeld = true;
 
                 isCorrectLetter = inputChar == sentenceToType[currentLetterIndex].ToString().ToLower()[0];
+                SelectAndPlayTypingSound(isCorrectLetter);
                 UpdateTypingText();
             }
 
@@ -147,6 +145,27 @@ namespace Internal.Gameplay
             {
                 typingZone.text = $"{typedPart}{typingSymbol}";
             }
+        }
+
+        private void SelectAndPlayTypingSound(bool isCorrectLetter = true)
+        {
+            string category;
+            string name;
+
+            if (isCorrectLetter)
+            {
+                var isSpacePressed = Input.GetKeyDown(KeyCode.Space);
+
+                category = isSpacePressed ? "Other Keys" : "Main Keys";
+                name = isSpacePressed ? "Spacebar Key" : null;
+            }
+            else
+            {
+                category = "Other Keys";
+                name = "Wrong Key";
+            }
+
+            AudioManager.OnPlaySound.Invoke(category, name);
         }
 
         private void Reset()

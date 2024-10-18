@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 097d92d1bf309a640a8ec5a8045580a2, type: 3}
   m_Name: Spacebar Key
   m_EditorClassIdentifier: 
-  Name: Spacebar
+  Name: Spacebar Key
   Clip: {fileID: 8300000, guid: 7ce2227c8039efe479bfb62e4c202052, type: 3}
