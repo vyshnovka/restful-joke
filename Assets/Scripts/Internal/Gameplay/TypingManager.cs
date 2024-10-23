@@ -1,9 +1,9 @@
-using External.JokeAPI;
 using Internal.Audio;
 using TMPro;
 using UnityEngine;
 using Utility.Helpers;
 
+//TODO: REFACTOR!!!
 namespace Internal.Gameplay
 {
     public class TypingManager : MonoBehaviour
@@ -176,10 +176,9 @@ namespace Internal.Gameplay
             if (testInEditor)
                 sentenceToType = "Testing the code.\nHello!";
             else
-                sentenceToType = JokeAPI.GenerateJoke().joke;
+                sentenceToType = JokeManager.GetJoke();
 #else
-            //? What about JokeManager?
-            sentenceToType = JokeAPI.GenerateJoke().joke;
+            sentenceToType = JokeManager.GetJoke();
 #endif
             sentenceToType = sentenceToType.Replace("\n", " ");
             currentLetterIndex = 0;
@@ -195,5 +194,7 @@ namespace Internal.Gameplay
                 0.5f));
             UpdateTypingText();
         }
+
+        public void ResetAfterClose() => Reset();
     }
 }
