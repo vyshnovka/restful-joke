@@ -1,3 +1,4 @@
+using External.JokeAPI.Definitions;
 using System;
 using System.IO;
 using System.Net;
@@ -24,27 +25,6 @@ namespace External.JokeAPI
         public int id;
         public bool safe;
         public string lang;
-    }
-
-
-    //TODO: Move to a separate file.
-    public enum Category
-    {
-        Programming,
-        Miscellaneous,
-        Dark,
-        Pun,
-        Spooky
-    }
-
-    public enum Blacklist
-    {
-        Nsfw,
-        Religious,
-        Political,
-        Racist,
-        Sexist,
-        Explicit
     }
 
     public static class JokeAPI
@@ -81,6 +61,7 @@ namespace External.JokeAPI
             try
             {
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://v2.jokeapi.dev/joke/" + SetCategory() + "?" + SetBlacklist() + "type=single");
+                
                 // Handling response disposal via 'using' block.
                 using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
                 {
