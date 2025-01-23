@@ -1,7 +1,4 @@
 namespace External.JokeAPI
 {
-    public class BlacklistCheckbox : Checkbox<Blacklist>
-    {
-
-    }
+    public class BlacklistCheckbox : Checkbox<Blacklist> { }
 }

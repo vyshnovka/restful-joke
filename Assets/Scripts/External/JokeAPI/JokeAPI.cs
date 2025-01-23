@@ -26,6 +26,8 @@ namespace External.JokeAPI
         public string lang;
     }
 
+
+    //TODO: Move to a separate file.
     public enum Category
     {
         Programming,

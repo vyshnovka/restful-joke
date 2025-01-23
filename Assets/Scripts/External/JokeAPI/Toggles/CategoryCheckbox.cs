@@ -1,8 +1,5 @@
 namespace External.JokeAPI
 {
-    public class CategoryCheckbox : Checkbox<Category>
-    {
-    
-    }
+    public class CategoryCheckbox : Checkbox<Category> { }
 }
 

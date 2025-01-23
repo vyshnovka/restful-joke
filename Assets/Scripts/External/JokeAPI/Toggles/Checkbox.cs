@@ -1,27 +1,25 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace External.JokeAPI
 {
+    [Serializable]
     public class Checkbox<T> : MonoBehaviour
     {
-        private Toggle toggle;
-
         [SerializeField]
         private T toggleValue;
+
+        private Toggle toggle;
+
+        public bool IsOn => toggle.isOn;
+        public string ToggleValue => toggleValue.ToString();
 
         void Start()
         {
             toggle = GetComponent<Toggle>();
 
-            toggle.onValueChanged.AddListener(OnToggle);
-
-            toggle.isOn = PlayerPrefs.GetInt(toggleValue.ToString(), 1) == 1;
+            toggle.isOn = PlayerPrefs.GetInt(ToggleValue.ToString(), 1) == 1;
         }
-
-        void OnDisable() => toggle.onValueChanged.RemoveAllListeners();
-
-        /// <summary>Saves toggle value to <see cref="PlayerPrefs"/>.</summary>
-        private void OnToggle(bool value) => PlayerPrefs.SetInt(toggleValue.ToString(), toggle.isOn ? 1 : 0);
     }
 }
