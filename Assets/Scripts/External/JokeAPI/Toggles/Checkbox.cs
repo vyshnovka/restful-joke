@@ -15,11 +15,11 @@ namespace External.JokeAPI
         public bool IsOn => toggle.isOn;
         public string ToggleValue => toggleValue.ToString();
 
-        void Start()
+        void Awake()
         {
             toggle = GetComponent<Toggle>();
 
-            toggle.isOn = PlayerPrefs.GetInt(ToggleValue.ToString(), 1) == 1;
+            toggle.isOn = PlayerPrefs.GetInt(ToggleValue, 1) == 1;
         }
     }
 }
