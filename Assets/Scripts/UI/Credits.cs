@@ -4,6 +4,6 @@ public class Credits : MonoBehaviour
 {
     void OnEnable()
     {
-        gameObject.SetActive(false);
+        gameObject.SetActive(false)
     }
 }
