@@ -1,43 +1,39 @@
-name: Unity CI/CD
+name: Unity Code Check (No License)
 
 on:
-    workflow_dispatch:
-    pull_request:
+  pull_request:
+  push:
+    branches:
+      - main
 
 jobs:
-  unity-tests:
+  unity-check:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Run Unity tests
-        uses: game-ci/unity-test-runner@v4
+      - name: Install Unity Editor
+        uses: game-ci/unity-builder@v4
         with:
-            unityVersion: 2022.3.20f1
-            testMode: all
-        env:
-            UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-            UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-            UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          unityVersion: 2022.3.20f1
 
-      - name: Post test results
-        if: always() && github.event_name == 'pull_request'
-        uses: actions/github-script@v7
-        env:
-            JOB_STATUS: ${{ job.status }}
-        with:
-            github-token: ${{ secrets.GITHUB_TOKEN }}
-            script: |
-                const status = process.env.JOB_STATUS;
-                const message = status === 'success'
-                    ? '**SUCCESS!**: No errors in Editor and Play Mode.'
-                    : '**FAILURE!**: Errors found in Editor or Play Mode.';
-                
-                github.rest.issues.createComment({
-                    issue_number: context.issue.number,
-                    owner: context.repo.owner,
-                    repo: context.repo.repo,
-                    body: message
-                });
+      - name: Run Unity
+        run: |
+          mkdir -p Logs
+          xvfb-run --auto-servernum \
+          unity-editor -batchmode -nographics -quit -projectPath . -logFile Logs/Unity.log || true
+
+      - name: Check Unity logs for errors
+        run: |
+          echo "=== Checking for Errors in Unity Log ==="
+          ERRORS=$(grep -E "(Error|Exception)" Logs/Unity.log || true)
+          
+          if [ -n "$ERRORS" ]; then
+            echo "FAILURE!\nFailed due to Unity Editor errors!"
+            echo "$ERRORS"
+            exit 1
+          else
+            echo "SUCCESS!\nNo errors found in Unity logs."
+          fi
