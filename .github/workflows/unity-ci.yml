@@ -21,29 +21,45 @@ jobs:
             UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
             UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
 
-      - name: Run Unity in batchmode
+      - name: Run Unity in play mode
+        id: playmode
         run: |
           mkdir -p Logs
           xvfb-run --auto-servernum \
-          unity-editor -batchmode -quit -projectPath . -logFile Logs/Unity.log || true
+          unity-editor -batchmode -nographics -projectPath . \
+          -executeMethod UnityEditor.EditorApplication.EnterPlaymode \
+          -quit -logFile Logs/PlayMode.log || true
 
-      - name: Check for Unity errors
+      - name: Try to build project
+        id: build
         run: |
-          SUCCESS_MSG="Build successful."
-          ERROR_MSG="Build failed!"
+          xvfb-run --auto-servernum \
+          unity-editor -batchmode -quit -projectPath . -logFile Logs/UnityBuild.log || true
 
-          echo "=== Unity Log Output ==="
-          ERRORS=$(grep -E "(Error|Exception)" Logs/Unity.log || true)
-          echo "$ERRORS"
+      - name: Collect and report Unity errors
+        if: always()
+        run: |
+          SUCCESS_MSG="Success! No errors."
+          PLAYMODE_MSG="Failed! Errors in play mode: "
+          BUILD_MSG="Failed! Errors while building: "
 
-          if [ -n "$ERRORS" ]; then
-            echo "$ERROR_MSG"
-            [ "${{ github.event_name }}" == "pull_request" ] && \
-            gh api repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments -f body="$ERROR_MSG%0A%0A$ERRORS"
+          echo "=== Play Mode Log Output ==="
+          PLAY_ERRORS=$(grep -E "(Error|Exception)" Logs/PlayMode.log || true)
+          echo "$PLAY_ERRORS"
+
+          echo "=== Build Log Output ==="
+          BUILD_ERRORS=$(grep -E "(Error|Exception)" Logs/UnityBuild.log || true)
+          echo "$BUILD_ERRORS"
+
+          if [ -n "$PLAY_ERRORS" ] || [ -n "$BUILD_ERRORS" ]; then
+            ERROR_REPORT=""
+            [ -n "$PLAY_ERRORS" ] && ERROR_REPORT+="$PLAYMODE_MSG%0A%0A$PLAY_ERRORS%0A%0A"
+            [ -n "$BUILD_ERRORS" ] && ERROR_REPORT+="$BUILD_MSG%0A%0A$BUILD_ERRORS%0A%0A"
+            echo "Build failed with errors."
+            gh api repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments -f body="$ERROR_REPORT"
             exit 1
           else
             echo "$SUCCESS_MSG"
-            [ "${{ github.event_name }}" == "pull_request" ] && \
             gh api repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments -f body="$SUCCESS_MSG"
           fi
         env:
