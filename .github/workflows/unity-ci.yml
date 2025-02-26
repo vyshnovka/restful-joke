@@ -1,0 +1,46 @@
+name: Unity CI/CD
+
+on:
+    workflow_dispatch:
+    pull_request: 
+
+jobs:
+  unity-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Unity
+        uses: game-ci/unity-builder@v2
+        with:
+          unityVersion: 2022.3.39f1
+
+      - name: Run Unity in batchmode
+        run: |
+          mkdir -p Logs
+          xvfb-run --auto-servernum \
+          unity-editor -batchmode -quit -projectPath . -logFile Logs/Unity.log || true
+
+      - name: Check for Unity errors
+        run: |
+          SUCCESS_MSG="Build successful."
+          ERROR_MSG="Build failed!"
+
+          echo "=== Unity Log Output ==="
+          ERRORS=$(grep -E "(Error|Exception)" Logs/Unity.log || true)
+          echo "$ERRORS"
+
+          if [ -n "$ERRORS" ]; then
+            echo "$ERROR_MSG"
+            [ "${{ github.event_name }}" == "pull_request" ] && \
+            gh api repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments -f body="$ERROR_MSG%0A%0A$ERRORS"
+            exit 1
+          else
+            echo "$SUCCESS_MSG"
+            [ "${{ github.event_name }}" == "pull_request" ] && \
+            gh api repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments -f body="$SUCCESS_MSG"
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
