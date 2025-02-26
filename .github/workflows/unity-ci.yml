@@ -1,10 +1,8 @@
-name: Unity Code Check (No License)
+name: Unity CI/CD
 
 on:
+  workflow_dispatch:
   pull_request:
-  push:
-    branches:
-      - main
 
 jobs:
   unity-check:
@@ -14,26 +12,34 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install Unity Editor
-        uses: game-ci/unity-builder@v4
+      - name: Set up Unity
+        uses: game-ci/unity-builder@v2
         with:
-          unityVersion: 2022.3.20f1
+          unityVersion: 2022.3.39f1
+          unityLicense: ${{ secrets.UNITY_LICENSE }}
 
-      - name: Run Unity
+      - name: Run Unity in batchmode
         run: |
           mkdir -p Logs
           xvfb-run --auto-servernum \
-          unity-editor -batchmode -nographics -quit -projectPath . -logFile Logs/Unity.log || true
+          unity-editor -batchmode -quit -projectPath . -logFile Logs/Unity.log || true
 
-      - name: Check Unity logs for errors
+      - name: Check for Unity errors
         run: |
-          echo "=== Checking for Errors in Unity Log ==="
+          SUCCESS_MSG="SUCCESS! No errors found."
+          ERROR_MSG="FAILURE! Build failed, see logs below."
+
+          echo "=== Unity Log Output ==="
           ERRORS=$(grep -E "(Error|Exception)" Logs/Unity.log || true)
-          
+          echo "$ERRORS"
+
           if [ -n "$ERRORS" ]; then
-            echo "FAILURE!\nFailed due to Unity Editor errors!"
-            echo "$ERRORS"
+            echo "$ERROR_MSG"
+            gh api repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments -f body="$ERROR_MSG%0A%0A$ERRORS"
             exit 1
           else
-            echo "SUCCESS!\nNo errors found in Unity logs."
+            echo "$SUCCESS_MSG"
+            gh api repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments -f body="$SUCCESS_MSG"
           fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
