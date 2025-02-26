@@ -12,7 +12,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Unity
+      - name: Activate Unity license
+        uses: game-ci/unity-activate@v2
+        with:
+          unityVersion: 2022.3.20f1
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+
+      - name: Run Unity tests
         uses: game-ci/unity-test-runner@v4
         with:
           unityVersion: 2022.3.20f1
