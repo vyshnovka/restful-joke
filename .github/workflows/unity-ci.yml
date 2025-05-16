@@ -22,22 +22,25 @@ jobs:
         run: |
           $errors = @()
           $failed = $false
+
           Get-ChildItem -Recurse -Filter *.csproj | ForEach-Object {
             $output = dotnet build $_.FullName --nologo --no-restore 2>&1
             if ($LASTEXITCODE -ne 0) {
               $failed = $true
               $output | Where-Object { $_ -match 'error' } | Select-Object -First 10 | ForEach-Object {
-                $errors += ($_ -replace '\s+', ' ')
+                $line = ($_ -replace '\s+', ' ').Trim()
+                $errors += $line
               }
             }
           }
 
-          "failed=$failed" | Out-File -Append -FilePath $env:GITHUB_OUTPUT
-          "errors<<EOF" | Out-File -Append -FilePath $env:GITHUB_OUTPUT
-          $errors -join "`n" | Out-File -Append -FilePath $env:GITHUB_OUTPUT
-          "EOF" | Out-File -Append -FilePath $env:GITHUB_OUTPUT
-
-          if ($failed) { exit 1 }
+          if ($failed) {
+            echo "BUILD_FAILED=true" >> $env:GITHUB_ENV
+            $errorsText = $errors -join "`n"
+            $errorsText | Out-File -FilePath errors.txt -Encoding utf8
+          } else {
+            echo "BUILD_FAILED=false" >> $env:GITHUB_ENV
+          }
 
       - name: Comment on PR
         if: always()
@@ -46,10 +49,9 @@ jobs:
         shell: pwsh
         run: |
           $pr = "${{ github.event.pull_request.number }}"
-          $failed = "${{ steps.build.outputs.failed }}"
-          $errors = "${{ steps.build.outputs.errors }}"
-          if ($failed -eq "True") {
-            gh pr comment $pr -b "❌ C# build failed. Please fix errors before merging:`n`n```\n$errors\n```"
+          if ("${{ env.BUILD_FAILED }}" -eq "true") {
+            $errors = Get-Content errors.txt -Raw
+            gh pr comment $pr -b "❌ C# build failed. Please fix errors before merging:`n```\n$errors\n```"
           } else {
             gh pr comment $pr -b "✅ C# build succeeded."
           }
