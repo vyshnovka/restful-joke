@@ -5,51 +5,49 @@ on:
     types: [opened, reopened, synchronize]
 
 jobs:
-  cs-check:
+  build:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Set up Unity
-        uses: game-ci/unity-builder@v4
-        with:
-          unityVersion: 2022.3.39f1
-        env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-
-      - name: Generate .csproj files via Unity
-        run: |
-          xvfb-run --auto-servernum \
-          unity-editor -batchmode -quit -projectPath . -executeMethod UnityEditor.SyncVS.SyncSolution
-
-      - name: Set up .NET
+      - name: Setup .NET SDK
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '6.0.x'
 
-      - name: Build all C# projects
+      - name: Build C# projects
         id: buildcheck
         run: |
-          echo "Building all .csproj files..."
-          for csproj in $(find . -name "*.csproj"); do
-            echo "Building $csproj"
-            dotnet restore "$csproj"
-            dotnet build "$csproj" --configuration Release --no-restore
+          BUILD_FAILED=0
+          ERRORS=""
+
+          for proj in $(find . -name '*.csproj'); do
+            dotnet restore "$proj"
+            OUTPUT=$(dotnet build "$proj" --configuration Release --no-restore 2>&1) || BUILD_FAILED=1
+            if [ $BUILD_FAILED -eq 1 ]; then
+              ERRORS="${ERRORS}\n\nProject: $proj\n$OUTPUT\n--------------------"
+            fi
           done
 
-      - name: Comment build result on PR
-        if: always()
-        run: |
-          if [ "${{ job.status }}" == "success" ]; then
-            MSG="✅ Unity C# build succeeded. No syntax errors found."
-          else
-            MSG="❌ Unity C# build failed. Please fix build errors before merging."
-          fi
+          echo "failed=$BUILD_FAILED" >> $GITHUB_OUTPUT
+          echo -e "errors<<EOF" >> $GITHUB_OUTPUT
+          echo -e "$ERRORS" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
 
-          PR_NUMBER="${{ github.event.pull_request.number }}"
-          echo "Commenting on PR #$PR_NUMBER"
-          gh api repos/${{ github.repository }}/issues/$PR_NUMBER/comments -f body="$MSG"
+          [ $BUILD_FAILED -eq 1 ] && exit 1
+
+      - name: Comment result on PR
+        if: always()
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ "${{ steps.buildcheck.outputs.failed }}" == "0" ]; then
+            MSG="✅ C# build succeeded. No syntax errors found."
+          else
+            MSG="❌ C# build failed. Please fix the errors before merging.\n\nErrors:\n```\n${{ steps.buildcheck.outputs.errors }}\n```"
+          fi
+
+          PR_NUM="${{ github.event.pull_request.number }}"
+          gh api repos/${{ github.repository }}/issues/$PR_NUM/comments -f body="$MSG"
