@@ -12,7 +12,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js (for non-interactive environment)
+      - name: Setup Node.js (to prevent node prompts)
         uses: actions/setup-node@v3
         with:
           node-version: '20'
@@ -22,36 +22,70 @@ jobs:
         with:
           dotnet-version: '6.0.x'
 
-      - name: Find and build C# projects
+      - name: Find and build C# projects with error capture
         id: buildcheck
+        shell: pwsh
         run: |
-          PROJS=$(find . -name '*.csproj')
-          if [ -z "$PROJS" ]; then
-            echo "No .csproj files found, exiting."
+          $projects = Get-ChildItem -Path . -Filter *.csproj -Recurse
+          if ($projects.Count -eq 0) {
+            Write-Host "No .csproj files found, exiting."
             exit 1
-          fi
+          }
 
-          BUILD_FAILED=0
+          $allErrors = @()
+          $buildFailed = $false
 
-          for proj in $PROJS; do
-            dotnet restore "$proj"
-            dotnet build "$proj" --configuration Release --no-restore || BUILD_FAILED=1
-          done
+          foreach ($proj in $projects) {
+            dotnet restore $proj.FullName | Out-Null
 
-          echo "failed=$BUILD_FAILED" >> $GITHUB_OUTPUT
+            # Capture output of build
+            $buildOutput = dotnet build $proj.FullName --configuration Release --no-restore 2>&1
 
-          if [ $BUILD_FAILED -eq 1 ]; then
-            exit 1
-          fi
+            # Check if build failed
+            if ($LASTEXITCODE -ne 0) {
+              $buildFailed = $true
+              
+              # Extract errors: lines containing 'error' (case-insensitive)
+              $errors = $buildOutput | Where-Object { $_ -match 'error' } 
+
+              # For each error, take up to 2 lines (error + next line if exists)
+              for ($i=0; $i -lt $errors.Count; $i++) {
+                $allErrors += $errors[$i]
+                if ($i + 1 -lt $errors.Count) {
+                  $allErrors += $errors[$i + 1]
+                  $i++
+                }
+                # Add a separator between errors
+                $allErrors += '---'
+              }
+            }
+          }
+
+          # Save error snippets and status for next step
+          $errorMessage = if ($allErrors.Count -gt 0) { $allErrors -join "`n" } else { "" }
+          Write-Output "failed=$([int]$buildFailed)" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+          Write-Output "errors<<EOF" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+          Write-Output "$errorMessage" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+          Write-Output "EOF" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+
+          if ($buildFailed) { exit 1 }
 
       - name: Post build result comment on PR
-        if: always() && steps.buildcheck.outputs.failed != ''
+        if: always()
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: pwsh
         run: |
-          PR_NUM="${{ github.event.pull_request.number }}"
-          if [ "${{ steps.buildcheck.outputs.failed }}" == "0" ]; then
-            gh api repos/${{ github.repository }}/issues/$PR_NUM/comments -f body="✅ C# build succeeded."
-          else
-            gh api repos/${{ github.repository }}/issues/$PR_NUM/comments -f body="❌ C# build failed. Please fix errors before merging."
-          fi
+          $pr = $env:GITHUB_EVENT_PULL_REQUEST_NUMBER
+          $failed = "${{ steps.buildcheck.outputs.failed }}"
+          $errors = "${{ steps.buildcheck.outputs.errors }}"
+
+          if ($failed -eq "0") {
+            gh api repos/${{ github.repository }}/issues/$pr/comments -f body="✅ C# build succeeded."
+          } else {
+            $body = "❌ C# build failed. Please fix errors before merging:`n`n"
+            if ($errors) {
+              $body += $errors
+            }
+            gh api repos/${{ github.repository }}/issues/$pr/comments -f body=$body
+          }
