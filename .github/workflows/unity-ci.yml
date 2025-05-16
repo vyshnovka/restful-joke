@@ -12,6 +12,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Setup Node.js (for non-interactive environment)
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v3
         with:
@@ -27,20 +32,13 @@ jobs:
           fi
 
           BUILD_FAILED=0
-          ERRORS=""
 
           for proj in $PROJS; do
             dotnet restore "$proj"
-            OUTPUT=$(dotnet build "$proj" --configuration Release --no-restore 2>&1) || BUILD_FAILED=1
-            if [ $BUILD_FAILED -eq 1 ]; then
-              ERRORS="${ERRORS}\n\nProject: $proj\n$OUTPUT\n--------------------"
-            fi
+            dotnet build "$proj" --configuration Release --no-restore || BUILD_FAILED=1
           done
 
           echo "failed=$BUILD_FAILED" >> $GITHUB_OUTPUT
-          echo -e "errors<<EOF" >> $GITHUB_OUTPUT
-          echo -e "$ERRORS" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
 
           if [ $BUILD_FAILED -eq 1 ]; then
             exit 1
@@ -53,7 +51,7 @@ jobs:
         run: |
           PR_NUM="${{ github.event.pull_request.number }}"
           if [ "${{ steps.buildcheck.outputs.failed }}" == "0" ]; then
-            gh api repos/${{ github.repository }}/issues/$PR_NUM/comments -f body="✅ C# build succeeded. No syntax errors found."
+            gh api repos/${{ github.repository }}/issues/$PR_NUM/comments -f body="✅ C# build succeeded."
           else
-            gh api repos/${{ github.repository }}/issues/$PR_NUM/comments -f body="❌ C# build failed. Fix errors before merging.\n\nErrors:\n```\n${{ steps.buildcheck.outputs.errors }}\n```"
+            gh api repos/${{ github.repository }}/issues/$PR_NUM/comments -f body="❌ C# build failed. Please fix errors before merging."
           fi
