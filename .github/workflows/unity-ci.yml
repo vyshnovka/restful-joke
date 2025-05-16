@@ -1,48 +1,53 @@
 name: Unity CI/CD
 
 on:
-  workflow_dispatch:
   pull_request:
+    types: [opened, reopened, synchronize]
 
 jobs:
-  unity-check:
+  cs-check:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout repo
         uses: actions/checkout@v4
 
       - name: Set up Unity
-        uses: game-ci/unity-builder@v4
+        uses: game-ci/unity-actions/setup@v2
         with:
           unityVersion: 2022.3.39f1
-        env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
 
-      - name: Run Unity in batchmode
+      - name: Generate .csproj files via Unity
         run: |
-          mkdir -p Logs
           xvfb-run --auto-servernum \
-          unity-editor -batchmode -quit -projectPath . -logFile Logs/Unity.log || true
+          unity-editor -batchmode -quit -projectPath . -executeMethod UnityEditor.SyncVS.SyncSolution
 
-      - name: Check for Unity errors
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '6.0.x'
+
+      - name: Build all C# projects
+        id: buildcheck
         run: |
-          SUCCESS_MSG="SUCCESS! No errors found."
-          ERROR_MSG="FAILURE! Build failed, see logs below."
+          echo "Building all .csproj files..."
+          for csproj in $(find . -name "*.csproj"); do
+            echo "Building $csproj"
+            dotnet restore "$csproj"
+            dotnet build "$csproj" --configuration Release --no-restore
+          done
 
-          echo "=== Unity Log Output ==="
-          ERRORS=$(grep -E "(Error|Exception)" Logs/Unity.log || true)
-          echo "$ERRORS"
-
-          if [ -n "$ERRORS" ]; then
-            echo "$ERROR_MSG"
-            gh api repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments -f body="$ERROR_MSG%0A%0A$ERRORS"
-            exit 1
+      - name: Comment build result on PR
+        if: always()
+        run: |
+          if [ "${{ job.status }}" == "success" ]; then
+            MSG="✅ Unity C# build succeeded. No syntax errors found."
           else
-            echo "$SUCCESS_MSG"
-            gh api repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments -f body="$SUCCESS_MSG"
+            MSG="❌ Unity C# build failed. Please fix build errors before merging."
           fi
+
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+          echo "Commenting on PR #$PR_NUMBER"
+          gh api repos/${{ github.repository }}/issues/$PR_NUMBER/comments -f body="$MSG"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
