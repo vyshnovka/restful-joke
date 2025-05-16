@@ -1,4 +1,4 @@
-name: Unity CI/CD
+name: C# Build Check on PR
 
 on:
   pull_request:
@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Setup .NET SDK
@@ -17,13 +17,19 @@ jobs:
         with:
           dotnet-version: '6.0.x'
 
-      - name: Build C# projects
+      - name: Find and build C# projects
         id: buildcheck
         run: |
+          PROJS=$(find . -name '*.csproj')
+          if [ -z "$PROJS" ]; then
+            echo "No .csproj files found, exiting."
+            exit 1
+          fi
+
           BUILD_FAILED=0
           ERRORS=""
 
-          for proj in $(find . -name '*.csproj'); do
+          for proj in $PROJS; do
             dotnet restore "$proj"
             OUTPUT=$(dotnet build "$proj" --configuration Release --no-restore 2>&1) || BUILD_FAILED=1
             if [ $BUILD_FAILED -eq 1 ]; then
@@ -36,18 +42,18 @@ jobs:
           echo -e "$ERRORS" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
-          [ $BUILD_FAILED -eq 1 ] && exit 1
+          if [ $BUILD_FAILED -eq 1 ]; then
+            exit 1
+          fi
 
-      - name: Comment result on PR
-        if: always()
+      - name: Post build result comment on PR
+        if: always() && steps.buildcheck.outputs.failed != ''
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if [ "${{ steps.buildcheck.outputs.failed }}" == "0" ]; then
-            MSG="✅ C# build succeeded. No syntax errors found."
-          else
-            MSG="❌ C# build failed. Please fix the errors before merging.\n\nErrors:\n```\n${{ steps.buildcheck.outputs.errors }}\n```"
-          fi
-
           PR_NUM="${{ github.event.pull_request.number }}"
-          gh api repos/${{ github.repository }}/issues/$PR_NUM/comments -f body="$MSG"
+          if [ "${{ steps.buildcheck.outputs.failed }}" == "0" ]; then
+            gh api repos/${{ github.repository }}/issues/$PR_NUM/comments -f body="✅ C# build succeeded. No syntax errors found."
+          else
+            gh api repos/${{ github.repository }}/issues/$PR_NUM/comments -f body="❌ C# build failed. Fix errors before merging.\n\nErrors:\n```\n${{ steps.buildcheck.outputs.errors }}\n```"
+          fi
