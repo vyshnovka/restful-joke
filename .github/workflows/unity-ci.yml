@@ -9,83 +9,47 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node.js (to prevent node prompts)
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20'
-
-      - name: Setup .NET SDK
+      - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '6.0.x'
 
-      - name: Find and build C# projects with error capture
-        id: buildcheck
+      - name: Build C# Projects
+        id: build
         shell: pwsh
         run: |
-          $projects = Get-ChildItem -Path . -Filter *.csproj -Recurse
-          if ($projects.Count -eq 0) {
-            Write-Host "No .csproj files found, exiting."
-            exit 1
-          }
-
-          $allErrors = @()
-          $buildFailed = $false
-
-          foreach ($proj in $projects) {
-            dotnet restore $proj.FullName | Out-Null
-
-            # Capture output of build
-            $buildOutput = dotnet build $proj.FullName --configuration Release --no-restore 2>&1
-
-            # Check if build failed
+          $errors = @()
+          $failed = $false
+          Get-ChildItem -Recurse -Filter *.csproj | ForEach-Object {
+            $output = dotnet build $_.FullName --nologo --no-restore 2>&1
             if ($LASTEXITCODE -ne 0) {
-              $buildFailed = $true
-              
-              # Extract errors: lines containing 'error' (case-insensitive)
-              $errors = $buildOutput | Where-Object { $_ -match 'error' } 
-
-              # For each error, take up to 2 lines (error + next line if exists)
-              for ($i=0; $i -lt $errors.Count; $i++) {
-                $allErrors += $errors[$i]
-                if ($i + 1 -lt $errors.Count) {
-                  $allErrors += $errors[$i + 1]
-                  $i++
-                }
-                # Add a separator between errors
-                $allErrors += '---'
+              $failed = $true
+              $output | Where-Object { $_ -match 'error' } | Select-Object -First 10 | ForEach-Object {
+                $errors += ($_ -replace '\s+', ' ')
               }
             }
           }
 
-          # Save error snippets and status for next step
-          $errorMessage = if ($allErrors.Count -gt 0) { $allErrors -join "`n" } else { "" }
-          Write-Output "failed=$([int]$buildFailed)" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
-          Write-Output "errors<<EOF" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
-          Write-Output "$errorMessage" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
-          Write-Output "EOF" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+          "failed=$failed" | Out-File -Append -FilePath $env:GITHUB_OUTPUT
+          "errors<<EOF" | Out-File -Append -FilePath $env:GITHUB_OUTPUT
+          $errors -join "`n" | Out-File -Append -FilePath $env:GITHUB_OUTPUT
+          "EOF" | Out-File -Append -FilePath $env:GITHUB_OUTPUT
 
-          if ($buildFailed) { exit 1 }
+          if ($failed) { exit 1 }
 
-      - name: Post build result comment on PR
+      - name: Comment on PR
         if: always()
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: pwsh
         run: |
-          $pr = $env:GITHUB_EVENT_PULL_REQUEST_NUMBER
-          $failed = "${{ steps.buildcheck.outputs.failed }}"
-          $errors = "${{ steps.buildcheck.outputs.errors }}"
-
-          if ($failed -eq "0") {
-            gh api repos/${{ github.repository }}/issues/$pr/comments -f body="✅ C# build succeeded."
+          $pr = "${{ github.event.pull_request.number }}"
+          $failed = "${{ steps.build.outputs.failed }}"
+          $errors = "${{ steps.build.outputs.errors }}"
+          if ($failed -eq "True") {
+            gh pr comment $pr -b "❌ C# build failed. Please fix errors before merging:`n`n```\n$errors\n```"
           } else {
-            $body = "❌ C# build failed. Please fix errors before merging:`n`n"
-            if ($errors) {
-              $body += $errors
-            }
-            gh api repos/${{ github.repository }}/issues/$pr/comments -f body=$body
+            gh pr comment $pr -b "✅ C# build succeeded."
           }
