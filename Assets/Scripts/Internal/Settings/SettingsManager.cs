@@ -2,25 +2,38 @@ using External.JokeAPI;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SettingsManager : MonoBehaviour
+namespace Internal.Settings
 {
-    [SerializeField]
-    private List<CategoryCheckbox> categories;
-    [SerializeField]
-    private List<BlacklistCheckbox> blacklisted;
-
-    //TODO: Find a way to reuse the code and not rely on going through every list manually!
-    /// <summary>Saves all toggle values to <see cref="PlayerPrefs"/>.</summary>
-    public void ApplySettings()
+    public class SettingsManager : MonoBehaviour
     {
-        foreach (var category in categories)
-        {
-            PlayerPrefs.SetInt(category.ToggleValue.ToString(), category.IsOn ? 1 : 0);
-        }
+        [SerializeField]
+        private List<CategoryCheckbox> categories;
+        [SerializeField]
+        private List<BlacklistCheckbox> blacklisted;
 
-        foreach (var blacklisted in blacklisted)
+        // TODO: Use events and subscribe instead of assigning via editor.
+        /// <summary>Saves all toggle values to <see cref="PlayerPrefs"/>.</summary>
+        public void ApplySettings()
         {
-            PlayerPrefs.SetInt(blacklisted.ToggleValue.ToString(), blacklisted.IsOn ? 1 : 0);
+            foreach (var category in categories)
+            {
+                if (category != null && category.HasChanged)
+                {
+                    PlayerPrefs.SetInt(category.ToggleKey, category.IsOn ? 1 : 0);
+                    category.HasChanged = false;
+                }
+            }
+
+            foreach (var blacklisted in blacklisted)
+            {
+                if (blacklisted != null && blacklisted.HasChanged)
+                {
+                    PlayerPrefs.SetInt(blacklisted.ToggleKey, blacklisted.IsOn ? 1 : 0);
+                    blacklisted.HasChanged = false;
+                } 
+            }
+
+            PlayerPrefs.Save();
         }
     }
 }

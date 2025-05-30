@@ -10,16 +10,25 @@ namespace External.JokeAPI
         [SerializeField]
         private T toggleValue;
 
-        private Toggle toggle;
-
         public bool IsOn => toggle.isOn;
-        public string ToggleValue => toggleValue.ToString();
+        public string ToggleKey => toggleValue.ToString();
 
-        void Awake()
+        public bool HasChanged { get => hasChanged; set => hasChanged = value; }
+
+        private Toggle toggle;
+        private bool hasChanged = false;
+
+        void OnEnable()
         {
             toggle = GetComponent<Toggle>();
+            toggle.isOn = PlayerPrefs.GetInt(ToggleKey, 1) == 1;
 
-            toggle.isOn = PlayerPrefs.GetInt(ToggleValue, 1) == 1;
+            toggle.onValueChanged.AddListener((_) => HasChanged = true);
+        }
+
+        void OnDisable()
+        {
+            toggle.onValueChanged.RemoveAllListeners();
         }
     }
 }
