@@ -39,7 +39,7 @@ namespace External.JokeAPI
                     request += item.ToString() + ",";
             }
 
-            return string.IsNullOrEmpty(request) ? "Programming,Miscellaneous,Dark,Pun,Spooky" : request.Remove(request.Length - 1);
+            return string.IsNullOrEmpty(request) ? "Programming,Miscellaneous,Dark,Pun,Spooky" : request[..^1];
         }
 
         private static string SetBlacklist()
@@ -52,7 +52,7 @@ namespace External.JokeAPI
                     request += item.ToString() + ",";
             }
 
-            return string.IsNullOrEmpty(request) ? request : "blacklistFlags=" + request.ToLower().Remove(request.Length - 1) + "&";
+            return string.IsNullOrEmpty(request) ? request : "blacklistFlags=" + request.ToLower()[..(request.Length - 1)] + "&";
         }
 
         /// <summary>Sends web request to <see href="https://sv443.net/jokeapi/v2/">JokeAPI</see> and generates response in form of a <see cref="Joke"/>.</summary>

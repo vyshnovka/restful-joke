@@ -41,7 +41,7 @@ namespace Internal.Gameplay
         private bool isSentenceCompleted = false;
         private bool isBlinking = false; //! BAD. Just for testing.
 
-        void Start() => Reset();
+        public void StartGame() => Reset();
 
         void Update()
         {
@@ -194,7 +194,5 @@ namespace Internal.Gameplay
                 0.5f));
             UpdateTypingText();
         }
-
-        public void ResetAfterClose() => Reset();
     }
 }

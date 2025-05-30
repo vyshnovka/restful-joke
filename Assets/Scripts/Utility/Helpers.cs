@@ -49,7 +49,7 @@ namespace Utility.Helpers
         /// <summary>Determines whether a given numeric value falls within any of the specified intervals.</summary>
         /// <param name="number">The numeric value to check against the intervals.</param>
         /// <param name="intervals">An array of time intervals, each defined by a start and end time.</param>
-        /// <returns>Returns <c>true</c> if the value is within any of the specified intervals and <c>false</c> otherwise.</returns>
+        /// <returns>Returns <c>true</c> if the value is within any of the specified intervals, <c>false</c> otherwise.</returns>
         public static bool IsInIntervals<T>(T number, NumericInterval<T>[] intervals) where T : IComparable<T>
         {
             foreach (var interval in intervals)
