@@ -5,14 +5,13 @@ using UnityEngine.UI;
 namespace External.JokeAPI
 {
     [Serializable]
-    public class Checkbox<T> : MonoBehaviour
+    public class Checkbox<T> : MonoBehaviour, ICheckbox
     {
         [SerializeField]
         private T toggleValue;
 
-        public bool IsOn => toggle.isOn;
         public string ToggleKey => toggleValue.ToString();
-
+        public bool IsOn => toggle.isOn;
         public bool HasChanged { get => hasChanged; set => hasChanged = value; }
 
         private Toggle toggle;
