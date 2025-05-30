@@ -60,7 +60,7 @@ namespace External.JokeAPI
         {
             try
             {
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://v2.jokeapi.dev/joke/" + SetCategory() + "?" + SetBlacklist() + "type=single");
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL.WebRequest + SetCategory() + "?" + SetBlacklist() + "type=single");
                 
                 // Handling response disposal via 'using' block.
                 using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())

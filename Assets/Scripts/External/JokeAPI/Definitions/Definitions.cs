@@ -18,4 +18,9 @@ namespace External.JokeAPI.Definitions
         Sexist,
         Explicit
     }
+
+    public static class URL
+    {
+        public static string WebRequest = "https://v2.jokeapi.dev/joke/";
+    }
 }
