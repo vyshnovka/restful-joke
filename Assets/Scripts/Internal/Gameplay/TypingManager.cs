@@ -1,25 +1,21 @@
 using Internal.Audio;
 using TMPro;
 using UnityEngine;
+using Utility;
 using Utility.Helpers;
 
 //TODO: REFACTOR!!!
 namespace Internal.Gameplay
 {
-    public class TypingManager : MonoBehaviour
+    public class TypingManager : TestableMonoBehaviour
     {
-#if (UNITY_EDITOR)
-        [Tooltip("Available and used in Editor only!")]
-        [SerializeField]
-        private bool testInEditor = false;
-#endif
-
-        [Header("UI References")]
+        [Header("Scene References")]
         [SerializeField]
         private TextMeshProUGUI typingZone;
         [SerializeField]
         private TextMeshProUGUI nextTextZone;
 
+        [Header("Color Data")]
         [SerializeField]
         private Color nextLetterColor = Color.gray;
         [SerializeField]
@@ -27,6 +23,7 @@ namespace Internal.Gameplay
         [SerializeField]
         private Color rightLetterColor = Color.green;
 
+        [Header("Strings Data")]
         [SerializeField]
         private string typingSymbol = "|";
         [SerializeField]

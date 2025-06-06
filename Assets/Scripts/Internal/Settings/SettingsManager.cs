@@ -6,6 +6,7 @@ namespace Internal.Settings
 {
     public class SettingsManager : MonoBehaviour
     {
+        [Header("Checkbox Settings Data")]
         [SerializeField]
         private List<CategoryCheckbox> categories;
         [SerializeField]

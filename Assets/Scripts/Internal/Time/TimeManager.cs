@@ -1,17 +1,14 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using Utility;
 using Utility.Helpers;
 
 namespace Internal.Time
 {
-    public class TimeManager : MonoBehaviour
+    public class TimeManager : TestableMonoBehaviour
     {
 #if (UNITY_EDITOR)
-        [Tooltip("Available and used in Editor only!")]
-        [SerializeField]
-        private bool testInEditor = false;
-
         [SerializeField]
         [Range(0f, 1f), Tooltip("Value used for debugging.")]
         private float timePassedInEditor;

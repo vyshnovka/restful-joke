@@ -6,6 +6,7 @@ namespace UI
 {
     public class UIManager : MonoBehaviour
     {
+        [Header("Scene References")]
         [SerializeField]
         private GameObject gameplayCanvas;
         [SerializeField]
@@ -24,10 +25,5 @@ namespace UI
         }
 
         public void ExitGame() => Application.Quit();
-
-        public void EnableCredits()
-        {
-            _ = creditsCanvas.ToggleActiveAfterDelay(15f);
-        }
     }
 }
