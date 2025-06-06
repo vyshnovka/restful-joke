@@ -13,7 +13,9 @@ namespace Internal.Settings
         private List<BlacklistCheckbox> blacklisted;
 
         // TODO: Use events and subscribe instead of assigning via editor.
-        /// <summary>Saves all toggle values to <see cref="PlayerPrefs"/>.</summary>
+        /// <summary>
+        /// Save all toggle values to <see cref="PlayerPrefs"/>.
+        /// </summary>
         public void ApplySettings()
         {
             WriteSettings(categories);
@@ -22,6 +24,11 @@ namespace Internal.Settings
             PlayerPrefs.Save();
         }
 
+        /// <summary>
+        /// Go through all checkboxes and save only changed values to <see cref="PlayerPrefs"/>.
+        /// </summary>
+        /// <typeparam name="T">Instances of settings acting as checkboxes (e.g. categories).</typeparam>
+        /// <param name="options">List of checkboxes to go through.</param>
         private void WriteSettings<T>(List<T> options) where T : ICheckbox
         {
             foreach (var option in options)

@@ -30,7 +30,9 @@ namespace Internal.Audio
             OnPlayBackgroundSound -= PlayBackgroundSoundFromCategory;
         }
 
-        /// <summary>Play sound once with no loop from a separate source. Used for SFX sounds.</summary>
+        /// <summary>
+        /// Play sound once with no loop from a separate source. Used for SFX sounds.
+        /// </summary>
         /// <param name="categoryName">Category name.</param>
         /// <param name="soundName">>Sound to play. If not specified, random sound is playes.</param>
         private void PlaySoundFromCategory(string categoryName, string soundName = null)
@@ -50,7 +52,9 @@ namespace Internal.Audio
             PlaySound(sound);
         }
 
-        /// <summary></summary>
+        /// <summary>
+        /// Play sound from a specific source. Used for background music.
+        /// </summary>
         /// <param name="categoryName">Category name.</param>
         /// <param name="soundName">>Sound to play.</param>
         /// <param name="loop">Loop by default.</param>
@@ -70,7 +74,7 @@ namespace Internal.Audio
 
         private void PlayBackgroundSound(Sound sound, bool loop, float delay)
         {
-            Debug.Assert(sound != null && sound.Clip != null, $"Invalid theme sound passed.");
+            Debug.Assert(sound != null && sound.Clip != null, "Invalid theme sound passed.");
 
             sourceMain.clip = sound.Clip;
             sourceMain.loop = loop;

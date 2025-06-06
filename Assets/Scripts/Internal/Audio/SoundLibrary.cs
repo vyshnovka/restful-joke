@@ -8,7 +8,9 @@ namespace Internal.Audio
     {
         public List<DynamicSoundCategory> soundCategories = new();
 
-        /// <summary>Get sounds category by name.</summary>
+        /// <summary>
+        /// Get sounds category by name.
+        /// </summary>
         /// <param name="categoryName">Category name.</param>
         /// <returns>A list of sounds.</returns>
         public List<Sound> GetSoundCategory(string categoryName)
@@ -20,7 +22,9 @@ namespace Internal.Audio
             return category.sounds;
         }
 
-        /// <summary>Get a sound directly by category name and sound name.</summary>
+        /// <summary>
+        /// Get a sound directly by category name and sound name.
+        /// </summary>
         /// <param name="categoryName">Category name.</param>
         /// <param name="soundName">Sound name.</param>
         /// <returns>A sound.</returns>
