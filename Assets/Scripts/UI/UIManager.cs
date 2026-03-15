@@ -1,4 +1,4 @@
-using Internal.Audio;
+using Audio;
 using UnityEngine;
 using Utility.Extensions;
 

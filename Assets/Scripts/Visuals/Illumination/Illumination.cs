@@ -1,0 +1,21 @@
+using UnityEngine;
+using Visuals.Time;
+
+namespace Visuals.Illumination
+{
+    public abstract class Illumination : MonoBehaviour
+    {
+        private TimeManager timeManager;
+
+        // TODO: Not the best approach with looking for an object. Refactor to use action!
+        void OnEnable()
+        {
+            timeManager = FindObjectOfType<TimeManager>();
+            timeManager.OnTimeUpdated += UpdateTimeVisual;
+        }
+
+        void OnDisable() => timeManager.OnTimeUpdated -= UpdateTimeVisual;
+
+        public abstract void UpdateTimeVisual(float timePassed);
+    }
+}
