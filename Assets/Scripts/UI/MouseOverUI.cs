@@ -9,9 +9,15 @@ namespace UI
     {
         private TextMeshProUGUI menuItem;
 
-        void Awake() => menuItem = transform.GetComponentInChildren<TextMeshProUGUI>();
+        void Awake()
+        {
+            menuItem = transform.GetComponentInChildren<TextMeshProUGUI>();
+        }
 
-        void OnEnable() => menuItem.text = menuItem.text.TrimEnd('|');
+        void OnEnable()
+        {
+            menuItem.text = menuItem.text.TrimEnd('|');
+        }
 
         public void MouseEnter()
         {

@@ -21,7 +21,10 @@ namespace Internal.Time
             StartCoroutine(UpdateTimeVisual());
         }
 
-        void OnDestroy() => StopAllCoroutines();
+        void OnDestroy()
+        {
+            StopAllCoroutines();
+        }
 
         private IEnumerator UpdateTimeVisual()
         {
@@ -29,9 +32,13 @@ namespace Internal.Time
             {
 #if (UNITY_EDITOR)
                 if (testInEditor)
+                {
                     OnTimeUpdated?.Invoke(timePassedInEditor);
+                }
                 else
+                {
                     OnTimeUpdated?.Invoke(TimeHelpers.TimePassed());
+                }
 
                 yield return new WaitForEndOfFrame();
 #else

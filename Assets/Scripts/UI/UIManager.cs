@@ -17,7 +17,7 @@ namespace UI
         public void StartGameplay()
         {
             // TODO: Not the best approach. Refactor!
-            AudioManager.OnPlaySound.Invoke("Button", null);
+            AudioManager.OnSoundRequested.Invoke("Button", null);
 
             _ = loadingCanvas.ToggleActiveAfterDelay(4f);
             _ = gameplayCanvas.ToggleActiveAfterDelay(10f);

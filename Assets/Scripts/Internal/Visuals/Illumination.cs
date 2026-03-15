@@ -7,7 +7,7 @@ namespace Internal.Visuals
     {
         private TimeManager timeManager;
 
-        // TODO: Not the best approach with looking for an object. Refactor!
+        // TODO: Not the best approach with looking for an object. Refactor to use action!
         void OnEnable()
         {
             timeManager = FindObjectOfType<TimeManager>();

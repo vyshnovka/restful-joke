@@ -5,8 +5,9 @@ namespace Internal.Audio
 {
     public class AudioManager : MonoBehaviour
     {
-        public static Action<string, string> OnPlaySound;
-        public static Action<string, string, bool, float> OnPlayBackgroundSound;
+        // TODO: make event, not static
+        public static Action<string, string> OnSoundRequested;
+        public static Action<string, string, bool, float> OnBackgroundSoundRequested;
 
         [Header("Sound Sources")]
         [SerializeField]
@@ -20,14 +21,14 @@ namespace Internal.Audio
 
         void OnEnable()
         {
-            OnPlaySound += PlaySoundFromCategory;
-            OnPlayBackgroundSound += PlayBackgroundSoundFromCategory;
+            OnSoundRequested += PlaySoundFromCategory;
+            OnBackgroundSoundRequested += PlayBackgroundSoundFromCategory;
         }
 
         void OnDisable()
         {
-            OnPlaySound -= PlaySoundFromCategory;
-            OnPlayBackgroundSound -= PlayBackgroundSoundFromCategory;
+            OnSoundRequested -= PlaySoundFromCategory;
+            OnBackgroundSoundRequested -= PlayBackgroundSoundFromCategory;
         }
 
         /// <summary>

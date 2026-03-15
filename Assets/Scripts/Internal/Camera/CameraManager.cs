@@ -2,6 +2,7 @@ using UnityEngine;
 
 namespace Internal.Camera
 {
+    [RequireComponent(typeof(Animator))]
     public class CameraManager : MonoBehaviour
     {
         private Animator animator;
