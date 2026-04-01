@@ -10,10 +10,9 @@ And it will be a bomb.
 ![image](https://img.shields.io/badge/blender-%23F5792A.svg?style=for-the-badge&logo=blender&logoColor=white) 
 
 ## Setup
-
-1. Install Unity 2022.3.29 from [archive](https://unity3d.com/get-unity/download/archive).    
-2. Clone this repository using `git clone https://github.com/vyshnovka/restful-joke.git` in Git Bash.    
-3. Open created folder as a project in Unity Hub.    
+    
+1. Clone this repository using `git clone https://github.com/vyshnovka/restful-joke.git` in Git Bash.    
+2. Open created folder as a project in Unity Hub.    
 
 ## Credits
 
